@@ -1,0 +1,63 @@
+1. DynamoDB:
+	a) Enable AutoScaling for DynamoDB table to dynamically adjust provisioned read/write capacity.
+
+
+Network LoadBalancer uses:(Over classic loadbalancer)
+	a) Ability to handle volatile workloads and scale to millions of requests per second
+
+	b) Support Static IP addresses for the load balancer. You can also assaign one Elastic IP per subnet enabled for the load balancer.
+
+	c) Supports for registering targets by IP address, including targets outside the VPC  for the load balancer.
+
+OpsWork:
+	a) It is configuration management service of EC2 instances
+
+
+AWS Direct Connect:
+	--Establish a dedicated connection between your on-premise to AWS.
+	-- Private connection between AWS and your datacenter, office or colocation, reduce the network cost, increase the bandwidth.
+
+
+
+Inbound requests can be stopped at subnet level, using NACL with deny [IP address]
+
+egress-only Internet Gateway: (VPC level)
+	a) All IPV6 address are public by default. if your instance able to access the internet but prevent resources on internet to communicate with instance.
+NAT instance & NAT Gateway:
+	a) Used only for instances in the private subnet to communicate with the internet.
+
+VPC:
+	a) if you want your VPC works with both IPV4 and Ipv6, you must ensure the your VPC works on dula-stack mode.
+
+Route53:
+	a) weighted Route policy is used to load balancing test new versions of software.
+
+Billing:
+	a) cost & usage reports provides comprehensive cost details for all resources in AWS with support of multiple files, adjusting columns in the file.
+
+AWS WAF(Web Application firewall):(Customization of AWS Shield service)
+	a) Cross-site scripting
+	b) Ip Adress blocking
+	c) Lenght of request
+	d) SQL Injection
+	e) Geographic Match
+	f) String Match
+
+AWS Shield:
+	a) Manged solution where all security filters are applied by AWS
+
+IAM:
+	a) What can this user do in AWS? -- IAM policies
+	b) Who can access this S3 bucket? -- S3 Bucket Policies
+	c) S3 ACL-- Object specific permission in single bucket.
+
+S3:
+	a) for server logs delivered to the target bucket, encryption should be SSE-S3
+
+AWS System Manager:
+	a) State manager is used to command document to keep amazon EC2 in a predefined state.
+
+AWS Guard Duty: (VPC Flow logs,CloudTrailEvent logs, DNS logs)
+	a) used to include custom IP address for generating findings to detect malicious activities.
+	b) Guard Duty maintains:
+		Trusted Ip list & Threat List
