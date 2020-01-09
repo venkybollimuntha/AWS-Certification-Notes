@@ -61,3 +61,13 @@ AWS Guard Duty: (VPC Flow logs,CloudTrailEvent logs, DNS logs)
 	a) used to include custom IP address for generating findings to detect malicious activities.
 	b) Guard Duty maintains:
 		Trusted Ip list & Threat List
+
+EC2:
+	a) EC2 instances running in a private subnet of VPC can now have controlled access to S3 buckets. 
+
+S3:
+	a) New VPC Endpoints for S3 doesn't require gateway or NAT instances to communicate with private subnets of VPC.
+
+CloudWatch:
+	a) for custom dashboard in CloudWatch you must enable detail monitoring with user permission of PutMetricData & PutDashboard
+	
