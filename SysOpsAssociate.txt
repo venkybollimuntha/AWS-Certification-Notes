@@ -14,20 +14,21 @@ OpsWork:
 
 
 AWS Direct Connect:
-	--Establish a dedicated connection between your on-premise to AWS.
+	-- Establish a dedicated connection between your on-premise to AWS.
 	-- Private connection between AWS and your datacenter, office or colocation, reduce the network cost, increase the bandwidth.
 
 
-
-Inbound requests can be stopped at subnet level, using NACL with deny [IP address]
-
-egress-only Internet Gateway: (VPC level)
+egress-only Internet Gateway: (VPC level, IPv6 traffic specifically)
 	a) All IPV6 address are public by default. if your instance able to access the internet but prevent resources on internet to communicate with instance.
+
 NAT instance & NAT Gateway:
-	a) Used only for instances in the private subnet to communicate with the internet.
+	a) Used only for instances in the private subnet in a VPC to communicate with the internet via the public subnet.
 
 VPC:
 	a) if you want your VPC works with both IPV4 and Ipv6, you must ensure the your VPC works on dula-stack mode.
+
+VPC endpoints:
+	a) private instance communicate with only AWS services S3 and dynamoDB.
 
 Route53:
 	a) weighted Route policy is used to load balancing test new versions of software.
@@ -35,7 +36,19 @@ Route53:
 Billing:
 	a) cost & usage reports provides comprehensive cost details for all resources in AWS with support of multiple files, adjusting columns in the file.
 
-AWS WAF(Web Application firewall):(Customization of AWS Shield service)
+IAM:
+	a) What can this user do in AWS? -- IAM policies
+	b) Who can access this S3 bucket? -- S3 Bucket Policies
+	c) S3 ACL-- Object specific permission in single bucket.
+
+S3:
+	a) for server logs delivered to the target bucket, encryption should be SSE-S3
+	b) if large no.of S3 buckets& Each require different set of permissions IAM policy will be easy to manage rather than bucket 	policy.
+	c) bucket policy is imposed on whole bucket, and using this cannot give individual permissions on each object in that bucket.
+	d) while performing multipart uploads, user must have decrypt permissions, because S3 perform decryption of files and read 		data to complete multipart upload.
+
+
+AWS WAF(Web Application firewall):(Customization version of AWS Shield service)
 	a) Cross-site scripting
 	b) Ip Adress blocking
 	c) Lenght of request
@@ -46,28 +59,80 @@ AWS WAF(Web Application firewall):(Customization of AWS Shield service)
 AWS Shield:
 	a) Manged solution where all security filters are applied by AWS
 
-IAM:
-	a) What can this user do in AWS? -- IAM policies
-	b) Who can access this S3 bucket? -- S3 Bucket Policies
-	c) S3 ACL-- Object specific permission in single bucket.
-
-S3:
-	a) for server logs delivered to the target bucket, encryption should be SSE-S3
-
-AWS System Manager:
+############# EC2 #############
+1. AWS System Manager:
 	a) State manager is used to command document to keep amazon EC2 in a predefined state.
+	b) it will manage and control & control AWS resources 
+	c) collecting Operating  System(OS), application and instance metadata.
 
-AWS Guard Duty: (VPC Flow logs,CloudTrailEvent logs, DNS logs)
-	a) used to include custom IP address for generating findings to detect malicious activities.
+2. AWS Guard Duty: (VPC Flow logs,CloudTrailEvent logs, DNS logs) (Threat Detection service EC2)
+	a) used to include custom IP address for generating findings to detect malicious/Threat activities.
 	b) Guard Duty maintains:
 		Trusted Ip list & Threat List
 
-EC2:
-	a) EC2 instances running in a private subnet of VPC can now have controlled access to S3 buckets. 
+3. AWS Config:
+	-- tool to audit & Evaluate configuration of AWS resources.
+	a) for multi-account, multi-region data aggregation, aws config uses aggregator to collect data.
+	b) track configurational changes done to AWS Resources.
+	c) AWS config needs to be enabled per region& not globlly
 
-S3:
-	a) New VPC Endpoints for S3 doesn't require gateway or NAT instances to communicate with private subnets of VPC.
 
-CloudWatch:
-	a) for custom dashboard in CloudWatch you must enable detail monitoring with user permission of PutMetricData & PutDashboard
-	
+4. AWS Inspector:(EC2 Instances Inspector)
+	a) can be used for accessing vulnerability for any ports & services on application installed on EC2, which can 	  be accessed from external networks.
+	b) center for Internet Security (CIS) Benchmarks
+	c) Security best pracitces for EC2
+	d) Runtime behaviour analysis.
+
+5. AWS Trusted Advicer:(Recommendations and Avises for limits)
+	a) Usage details of AWS resources whether they are within the service limits for a resource.
+
+
+
+AWS QuickSight:
+	a) used for interactive dashboards and themes from analysed data.
+	b) uses two editions:
+		-- Standard (No Encryption at rest)
+		-- Enterprise (support Encryption at rest)
+
+AWS EMR:(on-Premise clusters are moved to AWS)
+	a) EMR is a managed cluster platform that simplifies running big data frameworks (Apache, Hadoop, apache spark)
+	b) EMR used to transform and move large amount of data into and out of other AWS data stores and databases
+
+CloudFormation:
+	a) Change sets are used to make changes to the running resources in a stack.
+	b) cfn-helper script signals AWS cloudformation to indicate whether EC2 instance have been successfully created or updated.
+	c) 
+
+VPC-flowlogs:
+	 a) to troubleshoot why specific port is not reaching an instance in a VPC
+
+Interface VPC Endpoints:
+	a) it doen't require internet gateway, NAT device, VPN connection or AWS Direct connection.
+
+	b) it Enables communication between AWS services using an elastic network interface with private IP's in your Aamzon VPC
+
+AWS Storage Gateway:
+	a) AWS service connecting an on-premises software appliance with cloud-based storage
+
+
+
+Custom Route Table:(Associate with Public subnet)
+	 a) it should be associate with the public subnet
+	 b) this route table contains the entry that enables instance in the subnet to communicate with the other instances in the VPC over Ipv4. and directly with the internet over IPv4.
+
+
+Main Route Table:(Associate with Private subnet)
+ 	a) This route table contains an entry that enables instances in the subnet to communicate with other instances in the VPC over IPv4, as well directly with the internet through the **NAT Gateway** over IPv4.
+
+
+
+
+######### Notes ############
+	a) Security Groups -- VPC level protection
+	b) NACL -- subnets in VPC
+	c) AWS --> VPC --> AZ1/AZ2 --> Subnets(one or more) --> Route --> InternetGateway --> user
+	d) RDS and Redshift have automatic backup options without user intervention.
+
+
+
+
