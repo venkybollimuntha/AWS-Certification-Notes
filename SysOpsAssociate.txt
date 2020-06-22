@@ -1,5 +1,10 @@
+i) network interface:
+	A network interface is the point of interconnection between a computer and a private or public network
+
+
 1. DynamoDB:
 	a) Enable AutoScaling for DynamoDB table to dynamically adjust provisioned read/write capacity.
+	b) Dynamo DB global table is managed solution for deploying multi-region, multi-master database
 
 
 Network LoadBalancer uses:(Over classic loadbalancer)
@@ -13,6 +18,49 @@ OpsWork:
 	a) It is configuration management service of EC2 instances
 
 
+
+############################ VPC #################################
+
+VPC:( Virtual Private cloud)
+
+when you create a VPC using wizard it will create the following by default
+	a) 2 subnets – one private and one public
+	b) One NAT Gateway to route traffic from the public to private subnet
+	c) One internet gateway attached to the VPC
+
+Custom Route Table:(Associate with Public subnet)
+	 a) it should be associate with the public subnet
+	 b) this route table contains the entry that enables instance in the subnet to communicate with the other instances in the VPC over Ipv4. and directly with the internet over IPv4. only for EC2 instances
+
+
+Main Route Table:(Associate with Private subnet) (Comes default with VPC)
+ 	a) This route table contains an entry that enables instances in the subnet to communicate with other instances in the VPC over IPv4, as well directly with the internet through the **NAT Gateway** over IPv4. only for EC2 instances
+
+
+VPC endpoints:
+	a) private instance communicate with only AWS services S3 and dynamoDB, traffic do not leave the amazon network.
+
+	b) A VPC endpoint enables you to privately connect your VPC to supported AWS services and VPC endpoint services powered by AWS PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service
+
+	i) Interface VPC Endpoints:
+		a) it doen't require internet gateway, NAT device, VPN connection or AWS Direct connection.
+
+		b) it Enables communication between AWS services using an elastic network interface with private IP's in your Aamzon VPC
+
+	ii) Gateway Endpoints:
+		you specify as a target for a route in your route table for traffic destined to a supported AWS service
+		only S3 and DynamoDB are supported.
+
+
+AWS VPN:
+	a) AWS VPN links on-premise Network to AWS Network
+
+
+
+NAT instance & NAT Gateway: (Subnet to communicate the internet)
+	a) Used only for instances in the private subnet in a VPC to communicate with the internet via the public subnet.
+
+
 AWS Direct Connect:
 	-- Establish a dedicated connection between your on-premise to AWS.
 	-- Private connection between AWS and your datacenter, office or colocation, reduce the network cost, increase the bandwidth.
@@ -21,17 +69,13 @@ AWS Direct Connect:
 egress-only Internet Gateway: (VPC level, IPv6 traffic specifically)
 	a) All IPV6 address are public by default. if your instance able to access the internet but prevent resources on internet to communicate with instance.
 
-NAT instance & NAT Gateway:
-	a) Used only for instances in the private subnet in a VPC to communicate with the internet via the public subnet.
+VPC-flowlogs:
+	 a) to troubleshoot why specific port is not reaching an instance in a VPC
 
-VPC:
-	a) if you want your VPC works with both IPV4 and Ipv6, you must ensure the your VPC works on dula-stack mode.
+VPC Peering: (Routing between multiple VPC within AWS account or cross AWS account)
 
-VPC endpoints:
-	a) private instance communicate with only AWS services S3 and dynamoDB.
 
-Route53:
-	a) weighted Route policy is used to load balancing test new versions of software.
+
 
 Billing:
 	a) cost & usage reports provides comprehensive cost details for all resources in AWS with support of multiple files, adjusting columns in the file.
@@ -45,11 +89,12 @@ S3:
 	a) for server logs delivered to the target bucket, encryption should be SSE-S3
 	b) if large no.of S3 buckets& Each require different set of permissions IAM policy will be easy to manage rather than bucket 	policy.
 	c) bucket policy is imposed on whole bucket, and using this cannot give individual permissions on each object in that bucket.
-	d) while performing multipart uploads, user must have decrypt permissions, because S3 perform decryption of files and read 		data to complete multipart upload.
+	d) while performing multipart uploads, user must have decrypt permissions, because S3 perform decryption of files and read 	data to complete multipart upload.
+	e) S3 ignores query-string parameters that begin with "x-" and parameters included in access log records.
 
 
-AWS WAF(Web Application firewall):(Customization version of AWS Shield service)
-	a) Cross-site scripting
+AWS WAF (Web Application firewall):(Customization version of AWS Shield service)
+	a) Cross-site scriptin
 	b) Ip Adress blocking
 	c) Lenght of request
 	d) SQL Injection
@@ -59,8 +104,14 @@ AWS WAF(Web Application firewall):(Customization version of AWS Shield service)
 AWS Shield:
 	a) Manged solution where all security filters are applied by AWS
 
+
+Route53:
+	a) weighted Route policy is used to load balancing test new versions of software.
+
 ############# EC2 #############
-1. AWS System Manager:
+
+
+1. AWS System Manager Inventory: (collects only metadata from your managed instances)
 	a) State manager is used to command document to keep amazon EC2 in a predefined state.
 	b) it will manage and control & control AWS resources 
 	c) collecting Operating  System(OS), application and instance metadata.
@@ -70,11 +121,13 @@ AWS Shield:
 	b) Guard Duty maintains:
 		Trusted Ip list & Threat List
 
-3. AWS Config:
+3. AWS Config: (inventory of AWS resources and a history of configuration changes for compilances)
 	-- tool to audit & Evaluate configuration of AWS resources.
 	a) for multi-account, multi-region data aggregation, aws config uses aggregator to collect data.
 	b) track configurational changes done to AWS Resources.
-	c) AWS config needs to be enabled per region& not globlly
+	c) AWS config needs to be enabled per region & not globlly
+	d) pricing  i) No.of Active config rules and ii) No.of configuration items
+
 
 
 4. AWS Inspector:(EC2 Instances Inspector)
@@ -83,7 +136,7 @@ AWS Shield:
 	c) Security best pracitces for EC2
 	d) Runtime behaviour analysis.
 
-5. AWS Trusted Advicer:(Recommendations and Avises for limits)
+5. AWS Trusted Advicer:(Recommendations and Advises for limits)
 	a) Usage details of AWS resources whether they are within the service limits for a resource.
 
 
@@ -101,38 +154,80 @@ AWS EMR:(on-Premise clusters are moved to AWS)
 CloudFormation:
 	a) Change sets are used to make changes to the running resources in a stack.
 	b) cfn-helper script signals AWS cloudformation to indicate whether EC2 instance have been successfully created or updated.
-	c) 
+	c) parameter section is used to pass dynamic values to the template
+	d) hiding parameter value in cloudfromation template set NoEcho property as True
+	e) nested stack can be used to share information within a group of stacks
+	f) Resource section is required in cloudformation template. parameter, output, template version are optional
 
-VPC-flowlogs:
-	 a) to troubleshoot why specific port is not reaching an instance in a VPC
 
-Interface VPC Endpoints:
-	a) it doen't require internet gateway, NAT device, VPN connection or AWS Direct connection.
-
-	b) it Enables communication between AWS services using an elastic network interface with private IP's in your Aamzon VPC
 
 AWS Storage Gateway:
 	a) AWS service connecting an on-premises software appliance with cloud-based storage
 
 
 
-Custom Route Table:(Associate with Public subnet)
-	 a) it should be associate with the public subnet
-	 b) this route table contains the entry that enables instance in the subnet to communicate with the other instances in the VPC over Ipv4. and directly with the internet over IPv4.
+
+Dedicated Host:
+	a) It gives addtional Visibilty and control over how instances are placed on a physical server. and you can consistently deploy your instances to the same physical server over the time.
+
+Route53 alias:(let you route traffic to selected AWS services)
+	a) "Alias" record contains a *pointer* to an AWS Resources such as CloudFront Distribution or an S3 bucket
+	b) "A" Record type is used to point a resource via an IPv4 record.
+	c) "MX" Record type is used to point to for a mail server record.
+	d) "AAAA" Record type is used to point for resource via IPv6 protoco.
 
 
-Main Route Table:(Associate with Private subnet)
- 	a) This route table contains an entry that enables instances in the subnet to communicate with other instances in the VPC over IPv4, as well directly with the internet through the **NAT Gateway** over IPv4.
+AWS bastion Host:
+	 It is a server whose purpose is to provide access to a private network from an external network, such as the internet, because of it's exposure to potential attack, bastion host must minimize the chances of penetration.
 
+AWS Personal Health Dashboards:(Alerts and Remdediation guidance on backend AWS resources)
+	a) it gives alerts and remediation guidance when AWS is experiencing events
+
+AWS Cloud Trail:
+	a) cloud trail logs are automatically encrypted (SSE-S3)
+
+AWS RDS:
+	a) In multi availabilty zone deployment if primary DB instance fails, CNAME of primary would become to standby instance
+
+AWS SQS:
+	a) FIFO Queue ---> Exactly once delivery
+	b) Standard Queue ---> at least once processing
 
 
 
 ######### Notes ############
-	a) Security Groups -- VPC level protection
-	b) NACL -- subnets in VPC
+	a) Security Groups -- These are instance level permissions
+	b) NACL -- subnets level protection in VPC
 	c) AWS --> VPC --> AZ1/AZ2 --> Subnets(one or more) --> Route --> InternetGateway --> user
 	d) RDS and Redshift have automatic backup options without user intervention.
+	e) Cluster placement groups is a logical grouping of instances within a single AZ.
+	f) AWS Data life cycle manager would automatically maintian a backups and snapshots for your EBS volumes.
+	g) You cannot publish custom metrics from aws console. (you should use AWS CLI)
+	f) Role, Audience, RoleSessionName, NameID  required attributes present in the SAML Assertions.
+	g) VPC gateway endpoints doesn't support connectivity to amazon SQS
+	h) Hybrid connection between an On-premise data center and VPC hosted in AWS is AWS VPN managed connection
+	i) Scale up and scale down is involved with VERTICAL SCALING.
+	j) ALB access logs provides, time the request was received, IP address, request path, latencies and server responses
+	k) ACL is the optional layer of security for your VPC act as a firewall controlling traffic in and out of one or more subnets
+	l) if you want your VPC works with both IPV4 and Ipv6, you must ensure the your VPC works on dula-stack mode.
+
+Two different types of Health Check:
+
+a) EC2 health checks --> i) system status check ii) Instance status check
+b) ELB health checks
+
+AWS CLI commands
+
+	a) AWS CLI set-alarm-state command temporarily set the alaram is active for testing.
+	b) AWS CLI Dry run checks if you have the required permission for an action,  without making the actual request.
+	c) update-auto-scaling-group can be used to combine 2 groups
+	d) when you enable Auto Scaling via CLI the detailed monitoring will be enabled
+	f) disable-alarm-actions --alarm-names myalarm
 
 
+first 3 and last 1 Ip address of each subnet CIDR block is reserved for AWS
+VPC contain one or more instances, and cannot be deleted until those instances have been deleted
+
+You can publish your own metrics to cloudwatch using AWS CLI or an API
 
 
