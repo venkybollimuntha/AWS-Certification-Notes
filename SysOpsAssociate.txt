@@ -74,6 +74,8 @@ VPC-flowlogs:
 
 VPC Peering: (Routing between multiple VPC within AWS account or cross AWS account)
 
+Expanding VPC:
+	You can expand your existing VPC by adding four (4) secondary IPv4 IP ranges (CIDRs) to your VPC. You can shrink your VPC by deleting the secondary CIDR blocks you have added to your VPC. You cannot, however, change the size of the IPv6 address range of your VPC.
 
 
 
@@ -91,6 +93,8 @@ S3:
 	c) bucket policy is imposed on whole bucket, and using this cannot give individual permissions on each object in that bucket.
 	d) while performing multipart uploads, user must have decrypt permissions, because S3 perform decryption of files and read 	data to complete multipart upload.
 	e) S3 ignores query-string parameters that begin with "x-" and parameters included in access log records.
+	f) You can't grant root user bucket ACL permissions to IAM user of same account,but can other AWS accounts.
+	g) if a bucket has two policies one allow, and other deny, always deny override allow.
 
 
 AWS WAF (Web Application firewall):(Customization version of AWS Shield service)
@@ -107,6 +111,7 @@ AWS Shield:
 
 Route53:
 	a) weighted Route policy is used to load balancing test new versions of software.
+	b) weigted Route ploicy is used to route traffic between cloud and on-premise location.
 
 ############# EC2 #############
 
@@ -188,6 +193,9 @@ AWS Cloud Trail:
 
 AWS RDS:
 	a) In multi availabilty zone deployment if primary DB instance fails, CNAME of primary would become to standby instance
+	b) Automated backups are deleted when you delete RDS instance, can't be recovered.
+	c) maximum retention period for automated backups is 35 days
+	d) Disaster Recovery RDS: Create a read replica in a different region. In the event of a failover, promote the read replica as the primary and change the DNS for your application to point to the new primary and then enable Multi AZ.
 
 AWS SQS:
 	a) FIFO Queue ---> Exactly once delivery
@@ -228,6 +236,11 @@ AWS CLI commands
 first 3 and last 1 Ip address of each subnet CIDR block is reserved for AWS
 VPC contain one or more instances, and cannot be deleted until those instances have been deleted
 
-You can publish your own metrics to cloudwatch using AWS CLI or an API
+Cloudwatch:
+	a)You can publish your own metrics to cloudwatch using AWS CLI or an API
+	b) EC2, SNS, EMR doesn't support for detailed monitoring,
+	c) ELB, Route53, ASG provide some detailed metric with no additional charge.
 
+test2 37 question, 39
 
+snapshot vs automated backups vs read replica
