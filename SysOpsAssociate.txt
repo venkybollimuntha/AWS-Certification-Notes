@@ -1,10 +1,17 @@
+*****Data transfer charges within single AZ is free of cost (whether AZ is shared between same account or different AWS account)
+
 i) network interface:
-	A network interface is the point of interconnection between a computer and a private or public network
+	a) A network interface is the point of interconnection between a computer and a private or public 		network
+	b) security groups gets attached to the ENI and stateful (cares about only inbound traffic)
+	c) we can have multiple ENI attached to the single EC2 instance.
+
+
 
 
 1. DynamoDB:
 	a) Enable AutoScaling for DynamoDB table to dynamically adjust provisioned read/write capacity.
 	b) Dynamo DB global table is managed solution for deploying multi-region, multi-master database
+	c) Point-in-time recovery helps protect your Amazon DynamoDB tables from accidental write or delete operations.
 
 
 Network LoadBalancer uses:(Over classic loadbalancer)
@@ -14,36 +21,42 @@ Network LoadBalancer uses:(Over classic loadbalancer)
 
 	c) Supports for registering targets by IP address, including targets outside the VPC  for the load balancer.
 
-OpsWork:
-	a) It is configuration management service of EC2 instances
-
-
 
 ############################ VPC #################################
 
-VPC:( Virtual Private cloud)
+""" 
+The whole cinema around VPC is rovolves around the VPC and its connectivity to services 
+1. on premise or within AWS OR other AWS accounts, 
+2. publicly or privately, 
+3. with internet or without internet
 
-when you create a VPC using wizard it will create the following by default
+"""
+
+1. VPC:( Virtual Private cloud)
+
+	when you create a **VPC using wizard** it will create the following by default
 	a) 2 subnets – one private and one public
 	b) One NAT Gateway to route traffic from the public to private subnet
 	c) One internet gateway attached to the VPC
 
-Custom Route Table:(Associate with Public subnet)
+
+
+2. Custom Route Table:(Associate with Public subnet)
 	 a) it should be associate with the public subnet
 	 b) this route table contains the entry that enables instance in the subnet to communicate with the other instances in the VPC over Ipv4. and directly with the internet over IPv4. only for EC2 instances
 
 
-Main Route Table:(Associate with Private subnet) (Comes default with VPC)
+3. Main Route Table:(Associate with Private subnet) (Comes default with VPC)
  	a) This route table contains an entry that enables instances in the subnet to communicate with other instances in the VPC over IPv4, as well directly with the internet through the **NAT Gateway** over IPv4. only for EC2 instances
 
 
-VPC endpoints:
+4. VPC endpoints: (Enables private connectivity to services hosted in AWS,without internet)
 	a) private instance communicate with only AWS services S3 and dynamoDB, traffic do not leave the amazon network.
 
 	b) A VPC endpoint enables you to privately connect your VPC to supported AWS services and VPC endpoint services powered by AWS PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service
 
-	i) Interface VPC Endpoints:
-		a) it doen't require internet gateway, NAT device, VPN connection or AWS Direct connection.
+	i) Interface VPC Endpoints: (powered by AWS PrivateLink)
+		a) it doesn't require internet gateway, NAT device, VPN connection or AWS Direct connection.
 
 		b) it Enables communication between AWS services using an elastic network interface with private IP's in your Aamzon VPC
 
@@ -51,86 +64,126 @@ VPC endpoints:
 		you specify as a target for a route in your route table for traffic destined to a supported AWS service
 		only S3 and DynamoDB are supported.
 
+5. VPC endpoint servces: (Services in your VPC available to other AWS Accounts and services usng AWS PrivateLink)
+	a) You can use PrivateLink technology to make services in your VPC available to other AWS accounts and services, within AWS Network
 
-AWS VPN:
-	a) AWS VPN links on-premise Network to AWS Network
+6. VPC Peering: (Routing between multiple VPC within AWS account or cross AWS account via private network)
+	a) if two seperate departments wants to talk each other without *public network* we may go for VPC peerng. it also reduces the data trasfer charges.
+	b) NO transitive peering, edge routing, IGW access and NO NAT routing between VPC
+	c) oweners of both VPC need to confirm the peering request.
+	d) we need to update both Route Tables in both VPCs after peering is done(Allow cross CIDRs in both route tables)
+	e) No security groups are attached to NAT Gateway.
+	f) for VPC peering we should pay for data transfer charges
 
 
 
-NAT instance & NAT Gateway: (Subnet to communicate the internet)
+7. NAT instance & NAT Gateway: (Subnet to communicate the internet)
+	-- always placed in public subnet.
+	-- NAT Gateway: fully managed service by AWS recommends for prod environment
+	-- NAT instance: You should take care of everything like (EC2), recommended for test,dev env. 
 	a) Used only for instances in the private subnet in a VPC to communicate with the internet via the public subnet.
+	b) NAT Gateway cannot span accross AZ. for highly available environments you should place one NAT gateway in each subnet.
+	c) one Elastic IP must be associated with NAT Gateway.
+	d) NAT Gateway outbound rule should be intenet i.e (0.0.0.0/0)
 
 
-AWS Direct Connect:
+8. AWS Direct Connect: (alternative to using the Internet to connect customer's on premise sites to AWS.)
 	-- Establish a dedicated connection between your on-premise to AWS.
 	-- Private connection between AWS and your datacenter, office or colocation, reduce the network cost, increase the bandwidth.
 
 
-egress-only Internet Gateway: (VPC level, IPv6 traffic specifically)
+9. egress-only Internet Gateway: (VPC level, IPv6 traffic communicate to Internet)
 	a) All IPV6 address are public by default. if your instance able to access the internet but prevent resources on internet to communicate with instance.
+	b) In IPV6 protocol, public subnet is associatd to IGW and prvate subnet is associated to EIGW
 
-VPC-flowlogs:
+10. VPC-flowlogs:
 	 a) to troubleshoot why specific port is not reaching an instance in a VPC
 
-VPC Peering: (Routing between multiple VPC within AWS account or cross AWS account)
+11. AWS VPN:
+	a) AWS VPN links on-premise Network to AWS Network
+	b) A VPC VPN Connection utilizes IPSec to establish encrypted network connectivity between your intranet and Amazon VPC over the Internet
+	c) if you dont have an internet gateway, the only way to provide network access is virtual private gateway (VPN)
 
 
+12. VPC & Subnet Sharing:
+	a) better Bandwith (compared to Peering)
+	b) No Data transfer charges (because single AZ ID in the backend)
+	c) Better control of IAM permissions (No IAM person or account has access to remove other account resources and vice versa like EC2, just networking perspective is shared, and also billing is for the resource launched in the individual account)
 
+13. site-to-site VPN connection:
+	a) Amazon VPC enables you to use your own isolated resources within the AWS cloud, and then connect those resources directly to your own datacenter using industry-standard encrypted IPsec VPN connections.
 
-Billing:
-	a) cost & usage reports provides comprehensive cost details for all resources in AWS with support of multiple files, adjusting columns in the file.
+Notes:
+Instances in one region can communicate with each other using 
+	1.Inter-Region VPC Peering, 
+	2.public IP addresses, 
+	3.NAT gateway, 
+	4.NAT instances, 
+	5.VPN Connections or Direct Connect connections.
 
-IAM:
-	a) What can this user do in AWS? -- IAM policies
-	b) Who can access this S3 bucket? -- S3 Bucket Policies
-	c) S3 ACL-- Object specific permission in single bucket.
+You can use Amazon VPC traffic mirroring and Amazon VPC flow logs features to monitor the network traffic in your Amazon VPC
 
-S3:
-	a) for server logs delivered to the target bucket, encryption should be SSE-S3
-	b) if large no.of S3 buckets& Each require different set of permissions IAM policy will be easy to manage rather than bucket 	policy.
-	c) bucket policy is imposed on whole bucket, and using this cannot give individual permissions on each object in that bucket.
-	d) while performing multipart uploads, user must have decrypt permissions, because S3 perform decryption of files and read 	data to complete multipart upload.
-	e) S3 ignores query-string parameters that begin with "x-" and parameters included in access log records.
+first 3 and last 1 Ip address of each subnet CIDR block is reserved for AWS
 
+10.0.0.0 port ---> Network address
 
-AWS WAF (Web Application firewall):(Customization version of AWS Shield service)
-	a) Cross-site scriptin
-	b) Ip Adress blocking
-	c) Lenght of request
-	d) SQL Injection
-	e) Geographic Match
-	f) String Match
+10.0.0.1 ---> reserved for VPC Router
 
-AWS Shield:
-	a) Manged solution where all security filters are applied by AWS
+10.0.0.2,3 --> reserved for future purpose
 
+10.0.0.255 --> Network broadcast address
 
-Route53:
-	a) weighted Route policy is used to load balancing test new versions of software.
+if VPC contain one or more instances, and cannot be deleted until those instances have been deleted
+you cannot delete a subnet which has running instance in it.
+
+we can change existing VPC size by adding 4 sedondary IPV4 IP range CIDR to your VPC
+
+By default we cannot copy AMI between two regions, if we need to do copy the image to new region first
+
+when you create a subnet you can only attach one AZ to the subnet.
+
 
 ############# EC2 #############
 
 
 1. AWS System Manager Inventory: (collects only metadata from your managed instances)
-	a) State manager is used to command document to keep amazon EC2 in a predefined state.
-	b) it will manage and control & control AWS resources 
-	c) collecting Operating  System(OS), application and instance metadata.
+	-- SSM Agent must be installed in EC2 instance,
+	-- IAM role should be attached to the instance with access of AmazonEC2RoleforSSM
+	a) it will manage and control AWS resources 
+	b) collecting Operating  System(OS), application and instance metadata.
+	c) State Manager using *Command Document* helps to keep Amazon EC2 in a predefined state.
+					1. *Policy Document*  --> apply policy on EC2 instance
+					2. *Automation Document* --> performing automation tasks
+					3. *Package Document* --> create zip folder to install software on EC2 instance
+
+	For set-up of Systems Manager for Hybrid environment following actions needs to be done
+		1. Complete General Systems Manager Setup Steps
+		2. Create an IAM Service Role for a Hybrid Environment
+		3. Install a TLS certificate on On-Premises Servers and VMs
+		4. Create a Managed-Instance Activation for a Hybrid Environment
+		5. Install SSM Agent for a Hybrid Environment (Windows & Linux)
+		6. (Optional) Enable the Advanced-Instances Tier for more than 1000 servers per account per region.
 
 2. AWS Guard Duty: (VPC Flow logs,CloudTrailEvent logs, DNS logs) (Threat Detection service EC2)
 	a) used to include custom IP address for generating findings to detect malicious/Threat activities.
 	b) Guard Duty maintains:
 		Trusted Ip list & Threat List
+	c) as users from member account cannot modify or upload the Trusted IP list or Threat list.
+	d) Gaurd Duty rules cannot be disabled or deleted but can be auto archived. so any further findings from that rule will not be displayed in on Gaurd duty console or send to cloudwatch events.
 
 3. AWS Config: (inventory of AWS resources and a history of configuration changes for compilances)
 	-- tool to audit & Evaluate configuration of AWS resources.
-	a) for multi-account, multi-region data aggregation, aws config uses aggregator to collect data.
+	a) using AWS Aggregated view, we can pull resource details from multiple accounts & regions
 	b) track configurational changes done to AWS Resources.
 	c) AWS config needs to be enabled per region & not globlly
 	d) pricing  i) No.of Active config rules and ii) No.of configuration items
+	To record logs:
+		1) IAM role assigned to AWS Config has AWSConfiRole managed policy to record logs
+		2) if you have bucket policies, it should allow aws config permissions to record
+	e) custom rules with Lambda functions can be created to evaluate additional resources that aws config  doesn't record.
 
 
-
-4. AWS Inspector:(EC2 Instances Inspector)
+4. AWS Inspector:(EC2 Instances Inspector, security insights into your instance)
 	a) can be used for accessing vulnerability for any ports & services on application installed on EC2, which can 	  be accessed from external networks.
 	b) center for Internet Security (CIS) Benchmarks
 	c) Security best pracitces for EC2
@@ -139,7 +192,77 @@ Route53:
 5. AWS Trusted Advicer:(Recommendations and Advises for limits)
 	a) Usage details of AWS resources whether they are within the service limits for a resource.
 
+6. AWS OpsWork:(managed Chef & puppet services for automatic/repetitive deployments)
+	a) chef & puppet are two open source tools to perform server configuration automatically or repetitive tasks
+	b) It is configuration management service of EC2 instances
+	c) AWS OpsWorks == managed chef & puppet services
+	d) it is an alternative to AWS SSM
+	e) helps in consistent deployment in windows/linux
+	f) chef and puppet has simiarities with SSM/Beanstalk/Cloudformation but they are open source tools that works cross-cloud
 
+
+7. AWS Parameter store:
+	a) provides secure, hierarchical storage for configuration data management and secrets management. 
+	b) You can store data such as passwords, database strings, Amazon Machine Image (AMI) IDs, and license codes as parameter values. 
+	c) You can store values as plain text (string or stringList) or encrypted data.
+
+
+Billing:
+	a) cost & usage reports provides comprehensive cost details for all resources in AWS with support of multiple files, adjusting columns in the file.
+	b) You can enable billing alerts using cloudwatch alarms
+
+
+IAM:
+	a) What can this user do in AWS? -- IAM policies
+	b) Who can access this S3 bucket? -- S3 Bucket Policies
+	c) S3 ACL-- Object specific permission in single bucket.
+	d) IAM permission policy attached to IAM user that allows the user to pass only those roles that are approved
+	e) The trust policy is attached to the role in the trusting account, and is one-half of the permissions. The other half is a permissions policy attached to the user in the trusted account that allows that user to switch to, or assume the role.
+	d) inline policy can be used to maintain a strict one-to-one between policy and principal entity.
+
+S3:
+	-- All objects and Buckets by default are private
+	-- using pre-singed url customer/user can able to upload objects
+	a) for server logs delivered to the target bucket, encryption should be SSE-S3
+	b) if large no.of S3 buckets& Each require different set of permissions IAM policy will be easy to manage rather than bucket 	policy.
+	c) bucket policy is imposed on whole bucket, and using this cannot give individual permissions on each object in that bucket.
+	d) while performing multipart uploads, user must have decrypt permissions, because S3 perform decryption of files and read 	data to complete multipart upload.
+	e) S3 ignores query-string parameters that begin with "x-" and parameters included in access log records.
+	f) You can use the DurationSeconds parameter to specify the duration of the IAM role session upto 15 minutes.
+	g) S3 bucket path for amazon athena s3://bucketname/prefix
+
+	Attaching a Glacier Vault lock policy is a 2-step process.
+		1. First an Initiate Vault Lock is called which will attach a vault lock policy to the vault & returns a unique lock ID.
+		2. Post verification, a Complete Vault Lock needs to be initiated within 24 hours using lock ID generated from Initiate Vault Lock.
+		If a Complete Vault is not initiated within 24 hours , vault lock policy is removed
+
+	Enabling server access logs:
+		1. Bucket should have encryption SSE-S3
+		2. Source and Target bucket can be on the same bucket or different bucket
+		3. to grant write access to the S3 bucket, Bucket ACL is used.
+		4. logs will be deliver withing few hours after enabling logs
+
+
+AWS WAF (Web Application firewall):(Customization version of AWS Shield service)
+	a) Cross-site scripting
+	b) Ip Adress blocking
+	c) Lenght of request
+	d) SQL Injection
+	e) Geographic Match
+	f) String Match
+
+AWS Shield:(DDOS attack)
+	a) Manged solution where all security filters are applied by AWS
+
+
+Route53:
+	alias:(let you route traffic to selected AWS services)
+	a) "Alias" record contains a *pointer* to an AWS Resources such as CloudFront Distribution or an S3 bucket
+	b) "A" Record type is used to point a resource via an IPv4 record.
+	c) "MX" Record type is used to point to for a mail server record.
+	d) "AAAA" Record type is used to point for resource via IPv6 protocol.
+	e) weighted Route policy is used to load balancing test new versions of software.
+	f) latency-based routing lets you use DNS to route user requests to the Amazon EC2 region that will give your 	   users the fastest response
 
 AWS QuickSight:
 	a) used for interactive dashboards and themes from analysed data.
@@ -154,27 +277,22 @@ AWS EMR:(on-Premise clusters are moved to AWS)
 CloudFormation:
 	a) Change sets are used to make changes to the running resources in a stack.
 	b) cfn-helper script signals AWS cloudformation to indicate whether EC2 instance have been successfully created or updated.
-	c) parameter section is used to pass dynamic values to the template
 	d) hiding parameter value in cloudfromation template set NoEcho property as True
 	e) nested stack can be used to share information within a group of stacks
 	f) Resource section is required in cloudformation template. parameter, output, template version are optional
-
+	g) Resource section --- actual resources to be created
+	h) conditon section --> used to include statement when resource is created or property is defined
+	i) output section --> declare output values that can import into other stacks
+	j) mapping section --> matches a key to corresponding set of named values.
+	k) parameter section --> pass dynamic values to the template
 
 
 AWS Storage Gateway:
 	a) AWS service connecting an on-premises software appliance with cloud-based storage
-
-
-
+	b) AWS Storage Gateway uses AWS Key Management Service (AWS KMS) to support encryption
 
 Dedicated Host:
 	a) It gives addtional Visibilty and control over how instances are placed on a physical server. and you can consistently deploy your instances to the same physical server over the time.
-
-Route53 alias:(let you route traffic to selected AWS services)
-	a) "Alias" record contains a *pointer* to an AWS Resources such as CloudFront Distribution or an S3 bucket
-	b) "A" Record type is used to point a resource via an IPv4 record.
-	c) "MX" Record type is used to point to for a mail server record.
-	d) "AAAA" Record type is used to point for resource via IPv6 protoco.
 
 
 AWS bastion Host:
@@ -182,34 +300,69 @@ AWS bastion Host:
 
 AWS Personal Health Dashboards:(Alerts and Remdediation guidance on backend AWS resources)
 	a) it gives alerts and remediation guidance when AWS is experiencing events
+	b) Health Dashboards should be enable for individual accounts in an organisation.
 
-AWS Cloud Trail:
+AWS CloudTrail:
 	a) cloud trail logs are automatically encrypted (SSE-S3)
+	b) to determine whether the log file was deleted or modified or unchanged after cloudtrail delivered it using CloudTrail logfile integrity validation.
 
 AWS RDS:
 	a) In multi availabilty zone deployment if primary DB instance fails, CNAME of primary would become to standby instance
+	b) Automated backups are enabled by default for RDS unless they are explicitly disabled.
+
+	MultiAZ deployment Maintinance window process:
+		1.perform maintinance on standby
+		2.promote the standby to primary
+		3.perform maintinance on the old primary, which becomes the new standby
+
+	Best practices for multi AZ RDS:
+		1. scheduling automatic backups in non working hours
+		2. use larger instance types for production
+		3. use PIOPS (Provisioned IOPS)
+
+	Creating Read replica:
+		1. First, you must enable automatic backups on the source DB instance by setting the backup retention period to non zero value
+
+	Encryption at rest can be enabled for Amazon RDS DB instance using AES-256 encryption. Once enabled , DB instance , backups, snapshots , logs & Read Replica data is encrypted at rest. If both Master & Read-Replica is part of the same region, encryption key used for encryption should be same . If Master & Read-Replica are in different regions, encryption key should be used from the region in which Read-Replica is deployed.
+
 
 AWS SQS:
 	a) FIFO Queue ---> Exactly once delivery
 	b) Standard Queue ---> at least once processing
+	c) AWS SQS reserves right to delete queue after 30 days of inactivity without any notification
 
+AWS Secret Manager:
+	a) You can easily rotate, manage, and retrieve database credentials, API keys, and other secrets throughout their lifecycle.
+	b) You can rotate arbitrary secrets using custom lambda functions
+	c) rotate database credentials for amazon RDS datatypes.
 
+AWS Cloudwatch:
+	a) You can publish your own metrics to cloudwatch using AWS CLI or an API
+	b) using metric math expression we can query multiple metrics and show it in a single graph.
+	c) to create *custom dashboard* with metric data from different regions, Detail monitoring is required to be enabled. IAM user who has access to PutMetricData & PutDashboard can create custom dashboard.
+	d) Add a CloudWatch Event rule to automatically trigger Network Assessment post changes in security groups.
+
+RedShift:
+	a) You can configure Amazon Redshift to automatically copy snapshots (automated or manual) for a cluster to another region
 
 ######### Notes ############
 	a) Security Groups -- These are instance level permissions
 	b) NACL -- subnets level protection in VPC
-	c) AWS --> VPC --> AZ1/AZ2 --> Subnets(one or more) --> Route --> InternetGateway --> user
-	d) RDS and Redshift have automatic backup options without user intervention.
+	c) AWS --> VPC --> AZ1/AZ2 --> Subnets(one or more) --> RouteTable --> InternetGateway --> user
+	d) EBS, RDS and Redshift have automatic backup options without user intervention.
 	e) Cluster placement groups is a logical grouping of instances within a single AZ.
-	f) AWS Data life cycle manager would automatically maintian a backups and snapshots for your EBS volumes.
+	f) AWS Data Life Cycle Manager (DLM) would automatically maintian a backups and snapshots for your EBS volumes.
 	g) You cannot publish custom metrics from aws console. (you should use AWS CLI)
 	f) Role, Audience, RoleSessionName, NameID  required attributes present in the SAML Assertions.
 	g) VPC gateway endpoints doesn't support connectivity to amazon SQS
 	h) Hybrid connection between an On-premise data center and VPC hosted in AWS is AWS VPN managed connection
-	i) Scale up and scale down is involved with VERTICAL SCALING.
+	i) Scale up and scale down is involved with VERTICAL SCALING. (its always require start and stop of the service to scale)
 	j) ALB access logs provides, time the request was received, IP address, request path, latencies and server responses
 	k) ACL is the optional layer of security for your VPC act as a firewall controlling traffic in and out of one or more subnets
 	l) if you want your VPC works with both IPV4 and Ipv6, you must ensure the your VPC works on dula-stack mode.
+	m) we can't perform reeboot instance using autoscaling group.
+	n) Autoscaling uses a combnation of alarams and policies.
+	o) For a new volume created from a snapshot, you should read all the blocks that have data before using the volume.
 
 Two different types of Health Check:
 
@@ -223,11 +376,45 @@ AWS CLI commands
 	c) update-auto-scaling-group can be used to combine 2 groups
 	d) when you enable Auto Scaling via CLI the detailed monitoring will be enabled
 	f) disable-alarm-actions --alarm-names myalarm
+	g) set-instance-health command is used to set the health of the instance
+	h) elb enable-availability-zones-for-load-balancer --load-balancer-name my-loadbalancer --availability-zones us-west-2b
 
 
-first 3 and last 1 Ip address of each subnet CIDR block is reserved for AWS
-VPC contain one or more instances, and cannot be deleted until those instances have been deleted
+TEST - III:
+-----------
+Spectrum of disaster recovery Management: (highest to lowest downtime)
+1. Backup & Restore 
+2. Pilot Light
+3. Warm Standby
+4. Multi Site
 
-You can publish your own metrics to cloudwatch using AWS CLI or an API
+-- All objects and Buckets by default are private
+-- using pre-singed url customer/user can able to upload objects
 
 
+In AWS Organization, you can use aws:PrincipalOrgID to grant access to S3 bucket for members of different accounts instead of Account ID.
+
+create a secondary VPN connection for redundant VPN connection
+
+Role, Audience, RoleSessionName, NameID  required attributes present in the SAML Assertions.
+
+use optional SAML attribute SessionDuration to set user session to a maximum of 12 hours
+
+create presigned url to upload objects to the bucket
+
+
+
+
+test -IV:
+---------
+
+MFA Delete only works for CLI or API Interaction. also you cannot make version delete actions with MFA using IAM user credentials.
+
+DiskReadBytes metric will be used to determine the no.of bytes read from instance store volume.
+
+Cloudwatch cannot aggregate data across Regions, metrics are completely separate between regions, detailed monitoring must be enabled for aggregate statistics for EC2 instances
+
+set the onFailure to DO_NOTHING when creating a stack, won't delete stack if any errors happens while creating
+Deletion policy attribute in cloud formation uses to backup resource when stack is deleted.
+
+opcode identify the management command that was executed by a user in cloudHSM
