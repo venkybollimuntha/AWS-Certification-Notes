@@ -5,10 +5,19 @@ i) network interface:
 	b) security groups gets attached to the ENI and stateful (cares about only inbound traffic)
 	c) we can have multiple ENI attached to the single EC2 instance.
 
+**Eventual Consistency**:
+
+	Eventual consistency is a theoretical guarantee that, provided NO new updates to an entity are made, all reads of the entity will eventually return the last updated value
+	eg: DNS servers do not necessarily reflect the latest values, but eventually updates new content...
+	Advantages: Highly Available and Extremely scalable.
+
+**Strong Consistency or Immediate Consistency**:
+	traditional relational databases have been designed based on the concept of strong consistency.
 
 
 
 1. DynamoDB:
+	--by default DynamoDB uses Eventually Consistent reads, unless you specify otherwise
 	a) Enable AutoScaling for DynamoDB table to dynamically adjust provisioned read/write capacity.
 	b) Dynamo DB global table is managed solution for deploying multi-region, multi-master database
 	c) Point-in-time recovery helps protect your Amazon DynamoDB tables from accidental write or delete operations.
@@ -64,6 +73,8 @@ The whole cinema around VPC is rovolves around the VPC and its connectivity to s
 		you specify as a target for a route in your route table for traffic destined to a supported AWS service
 		only S3 and DynamoDB are supported.
 
+	c) VPC endpoints do not support cross-region requests.
+
 5. VPC endpoint servces: (Services in your VPC available to other AWS Accounts and services usng AWS PrivateLink)
 	a) You can use PrivateLink technology to make services in your VPC available to other AWS accounts and services, within AWS Network
 
@@ -98,6 +109,7 @@ The whole cinema around VPC is rovolves around the VPC and its connectivity to s
 
 10. VPC-flowlogs:
 	 a) to troubleshoot why specific port is not reaching an instance in a VPC
+	 b) capture information about the IP traffic going to and from network interafaces in the VPC
 
 11. AWS VPN:
 	a) AWS VPN links on-premise Network to AWS Network
@@ -230,6 +242,7 @@ S3:
 	e) S3 ignores query-string parameters that begin with "x-" and parameters included in access log records.
 	f) You can use the DurationSeconds parameter to specify the duration of the IAM role session upto 15 minutes.
 	g) S3 bucket path for amazon athena s3://bucketname/prefix
+	h) source and destination buckets must have versioning enabled for cross-region replication.
 
 	Attaching a Glacier Vault lock policy is a 2-step process.
 		1. First an Initiate Vault Lock is called which will attach a vault lock policy to the vault & returns a unique lock ID.
@@ -279,7 +292,8 @@ CloudFormation:
 	b) cfn-helper script signals AWS cloudformation to indicate whether EC2 instance have been successfully created or updated.
 	d) hiding parameter value in cloudfromation template set NoEcho property as True
 	e) nested stack can be used to share information within a group of stacks
-	f) Resource section is required in cloudformation template. parameter, output, template version are optional
+	f) updateReplacePolicy attribute is used to retain or backup resources while stack update process
+	   deletionPolicy attrbute is used to retain or backup resources before stack is deleted 
 	g) Resource section --- actual resources to be created
 	h) conditon section --> used to include statement when resource is created or property is defined
 	i) output section --> declare output values that can import into other stacks
@@ -302,6 +316,9 @@ AWS Personal Health Dashboards:(Alerts and Remdediation guidance on backend AWS 
 	a) it gives alerts and remediation guidance when AWS is experiencing events
 	b) Health Dashboards should be enable for individual accounts in an organisation.
 
+AWS Organization:
+	a) AWS cost & usage reports gets save in a S3 bucket of master account. and reports are not visible to any member account.
+
 AWS CloudTrail:
 	a) cloud trail logs are automatically encrypted (SSE-S3)
 	b) to determine whether the log file was deleted or modified or unchanged after cloudtrail delivered it using CloudTrail logfile integrity validation.
@@ -309,6 +326,8 @@ AWS CloudTrail:
 AWS RDS:
 	a) In multi availabilty zone deployment if primary DB instance fails, CNAME of primary would become to standby instance
 	b) Automated backups are enabled by default for RDS unless they are explicitly disabled.
+	c) You can only enable encryption for an Amazon RDS DB instance when you create it. not after DB is created.
+		however you can create snapshot, encrypt that snapshot and use it to recreate exiting database
 
 	MultiAZ deployment Maintinance window process:
 		1.perform maintinance on standby
@@ -342,8 +361,11 @@ AWS Cloudwatch:
 	c) to create *custom dashboard* with metric data from different regions, Detail monitoring is required to be enabled. IAM user who has access to PutMetricData & PutDashboard can create custom dashboard.
 	d) Add a CloudWatch Event rule to automatically trigger Network Assessment post changes in security groups.
 
-RedShift:
+AWS RedShift:
 	a) You can configure Amazon Redshift to automatically copy snapshots (automated or manual) for a cluster to another region
+
+AWSCodeCommit:
+	a) data in AWS CodeCommit Repositories is already encrypted in transit as well as rest.
 
 ######### Notes ############
 	a) Security Groups -- These are instance level permissions
@@ -401,20 +423,3 @@ Role, Audience, RoleSessionName, NameID  required attributes present in the SAML
 use optional SAML attribute SessionDuration to set user session to a maximum of 12 hours
 
 create presigned url to upload objects to the bucket
-
-
-
-
-test -IV:
----------
-
-MFA Delete only works for CLI or API Interaction. also you cannot make version delete actions with MFA using IAM user credentials.
-
-DiskReadBytes metric will be used to determine the no.of bytes read from instance store volume.
-
-Cloudwatch cannot aggregate data across Regions, metrics are completely separate between regions, detailed monitoring must be enabled for aggregate statistics for EC2 instances
-
-set the onFailure to DO_NOTHING when creating a stack, won't delete stack if any errors happens while creating
-Deletion policy attribute in cloud formation uses to backup resource when stack is deleted.
-
-opcode identify the management command that was executed by a user in cloudHSM
