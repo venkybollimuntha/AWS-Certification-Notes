@@ -1,0 +1,418 @@
+3389 --> RDP port
+3306 --> MySQL port
+5432 --> PostgreSQL
+2049 --> EFS NFS 
+
+
+AWS CloudFormation:
+	a) Cloud formation Drift Detection can be used to detect changes made to AWS resources outside the Cloud formation template
+
+AWS S3:
+
+	a) Global Accelerator and Cloudfront uses speed up the distribution of contents over the AWS global network
+
+	b) S3 Vault Lock Policy can be modified only once.
+	c) S3 Vault Access Policy used to grant permissions to access this files and we can modify this policy frequently.
+	d) Bucket policy and ACL cannot be used for encryption of bucket or its objects.
+
+	e) AWS Global Accelerator allocates two IPv4 anycast static IP addresses and keeps the traffic inside the AWS globally redundant network
+	
+	f) life cycle rules and versioning can work simultaneously.
+	g) CLI will automatically do multipart upload
+
+	f) Amazon Glacier:
+		Expedited retrieval -->1-5 min
+		standard retrieval --> 3-5 hours
+		Bulk retrieval --> 5-12 hours
+
+	S3 standard:
+		-- best fit for cloud applications, dynamic website, content distribution, mobile and gaming application, 		big data analytics
+
+	S3 standard -IA: (minimum 30 days)
+		-- Long term storage, backups and data store for disastor recovery.
+
+	Glacier:
+		-- very long term archive storage.
+
+AWS VPC:
+	a) VPC peering is non transitive, suppose A--> B and B --> C then A --> C is not work. 
+
+	b) For connecting VPC in trasitive way, you can use Transit Gateway, it act as hub for all VPCs.
+
+	c) AWS DirectConnect, VPC Peering, and VPC Endpoints are NOT using Internet to communicate.
+
+	AWS to on premise/corporate data center connection:
+	You can connect your VPC to remote networks by using VPN connection which can be
+	    -- Direct connect
+	    -- IPsec VPN connection
+	    -- AWS VPN Cloudhub
+	    -- Third party VPN software appliance
+
+	i) IPsec VPN:(Internet)
+		a) It uses IP sec protocol to establish encrypted network over internet.
+		b) It uses two tunnels.
+		c) Suitable for low to modest internet bandwith
+		d) VGW is attached to VPC and CGW with public IP is attached to on premise
+
+	ii) Direct Connect (Private):
+		a) Does not involve internet, low latency and High bandwidth.
+		b) uses dedicated standard Ethernet fiber-optic cable.
+		c) 1 GBPS to 10 GBPS ports are available.
+
+AWS Route53:
+
+	1. when Route53 is configured with Multi-Value answer routing, it return multiple values for web servers
+	2. Alias record is similar to a CNAME record, but the main difference is - you can create Alias record for both root domain & subdomain, whereas CNAME record can be created only to subdomain.
+
+AWS CloudHSM:
+	To backup the AWS CloudHSM data to Amazon S3 buckets in the same region, AWS CloudHSM generates a unique Ephemeral Backup Key (EBK) to encrypt all data using AES 256-bit encryption key. This Ephemeral Backup Key (EBK) is further encrypted using Persistent Backup Key (PBK) which is also AES 256-bit encryption key.
+
+Lambda@Edge:
+	Lambda@Edge can be a scalable solution to segregate different types of users accessing web applications. Amazon CloudFront can be used to cache web content from the origin server to provide low latency access to users.
+
+EBS Snapshots:
+	a) use cases:
+		i) Geographic expansion
+		ii) Migration
+		iii) Disaster Recovery
+		iv) Encryption
+		v) Data Retention & Auditing requirements
+
+	b) Encrypted EBS Volumes are not supported on all instance types.
+	c) EBS-Optimized instance provides additional, dedicated capacity for amazon EBS I/O.
+	d) You cannot remove encryption from an encrypted snapshot. but you can enable encryption while copying snapshot from an unencrypted snapshot.
+	e) Data LifeCycle Manager policy scheduler to create EBS snapshots
+	f) Data stored on EBS volumes are automatically and redundantly stored in multiple physical volumes in the same availability zone as part of the normal operations of the EBS service and at no additional charge
+	g) You can increase the size of exisitng EBS volume. 
+
+AutoScaling Group:
+	a) You cannot modify launch configuration after you have created it.
+	b) With application load balancer, cross-zone load balancing is always enabled.
+	c) pridictive scaling option can be used to analyze the history scaling pattrens.
+
+AWS Kinesis Firehose:(Nearly Real time but not exactly realtime)
+	Amazon Kinesis Firehose s scalable option to load data to analytical tools like Amazon Redshift from multiple sources. Amazon Redshift can be used for complex analytical queries for large amounts of data.
+
+AWS RDS:
+	a) Multi-AZ ---> synchronous replication.
+	b) Read Replica ---> Asynchronous replication.
+	
+
+Stored Gateway Volumes:
+	-- if you need low latency access to entire datset from on premise use gateway stored volume.
+	-- for storing/backup data in S3 or caching the frequently accessed data then use gateway cached volume.
+
+Global Accelerator:
+	a) Global accelerator is good fit for non-HTTP use cases, such as gaming (UDP),IoT (MQTT),VoIP,as well as for HTTP use cases like static IP address or fast regional failover.
+
+
+Important Terminology:
+
+	Decoupled architecture: (Independent of each service, but combined whole)
+		In general, a decoupled architecture is a framework for complex work that allows components to remain completely autonomous and unaware of each other. and
+		allows each component to perform its tasks independently of the others.
+
+	Hybrid Cloud:(combination of Cloud + On premise)
+		A hybrid cloud is the integration of a public cloud with private cloud or on-premise resources.The idea is to take advantage of both environment types.
+
+	let's look into the types of log categories we have in AWS:
+		1. AWS Infrastructure Logs - AWS CloudTrail, Amazon VPC Flow Logs,VPC Traffic Mirroring
+		2. AWS Service Logs - Amazon S3, ELB, Amazon CloudFront, AWS Lambda, AWS Elastic Beanstalk, etc.,
+		3. Host Based Logs - Messages, Security, NGINX/Apache/IIS, Windows Event Logs, Windows Performance Counters, etc.,
+
+
+
+The Lustre file system is an open source, parallel file system that can be used for HPC (High Performanc Computing) applications 
+
+RedShift support for cross region snapshots
+
+we can enable one CloudTrail for all regions
+
+ELB can only balance traffic in one region,not across multiple regions (ELB cannot span across regions)
+
+Elastic Fabric Adapter (EFA) used to imporve the perfomance of EC2 instance
+
+
+KMS master keys are region-specific 
+
+AWS Data Sync can be used for huge amounts of data transfer between on-premise and AWS.
+
+to pre-warm EC2 instances, EC2 hibernate (doesnt support AutoScaling group) is used.
+
+
+To remove Master Account from an organization, you must delete the organization,
+
+
+
+**Access logs are useful for want to log who has accessed your API (Created using APIGateway)
+
+
+
+Daddyo Application:
+
+1. Role based credentials for Lambda (Lambda has reserved environment variables)
+2. Dead letter queue for failed invocations, and send notification to SNS topic
+1. cheat sheet or tips
+2. articles on other public platforms like medium.
+
+
+
+test-2:
+--------
+	a) Create Alarms that stop, Terminate, Reboot, or Recover instance
+	b) if you are using SQS queue, to scaleup backend instances, no.of messages in the Queue is best metric named ApproximateNumberOfMessagesVisible.
+	
+	c) Existing unencrypted RDS instances and their snapshots cannot be encrypted. Users can only enable encryption for an RDS DB instance when they create it. instead copy existing db snapshot, encrypt it and restore this snapshot it to become encryption.
+	
+	d) use Data Sync for transferring data between on premise and S3 bucket while using storage gateway for accessing the S3 bucket data from on premise application.
+	
+	e) While transferring a constantly changing database between on-premise servers & EFS using AWS DataSync, data verification can be disabled during data transfer & can be enabled post data transfer for data integrity checks & ensure that all data is properly copied between on-premise servers & EFS
+
+	f) for RTMP distribution, signed URLS can be used to control access to private content by specifitying enddate, time & IP adress range.
+
+	g) Using AWS VPN is the fastest & cost-effective way of establishing IPSEC connectivity from on-premise to AWS
+
+
+test -3:
+-------
+	a) To move objects from Glacier Deep Archive to different storage classes, first need to restore to original locations using Amazon S3 Glacier console & then use lifecycle policy to move objects to required S3 Intelligent-Tiering storage class.
+
+	b) With versioning enabled S3 buckets, each version of an object can have a different retention period.
+
+	c) AWS Managed Microsfot AD can be used as the active directory over VPN or Direct Connect.
+
+	d) When EC2 heibernation, EC2 instance retain private IPv4 & Elastic IP address assigned to this instance but releases public IPv4 address.
+
+	e) AWS Direct Connect doesnot involve the intenet and does not encrypt traffic in trans-it
+
+	f) A VPC VPN Connection utilizes IPSec to establish encrypted network connectivity between your intranet and Amazon VPC over the Internet.
+
+	g) AWS Directory Service enables your end-users to use their existing corporate credentials while accessing AWS applications
+
+	h) use AWS OpsWorks to define the different layers for your application.
+
+	i) When you launch an instance in Amazon EC2, you have the option of passing user data to the instance that can be used to perform common automated configuration tasks and even run scripts after the instance starts
+
+	j) The Fargate launch type allows you to run your containerized applications without the need to provision and manage the backend infrastructure. Just register your task definition and Fargate launches the container for you
+
+
+Test 4:
+--------
+
+	a) To backup the AWS CloudHSM data to Amazon S3 buckets in the same region, AWS CloudHSM generates a unique Ephemeral Backup Key (EBK) to encrypt all data using AES 256-bit encryption key. This Ephemeral Backup Key (EBK) is further encrypted using Persistent Backup Key (PBK) which is also AES 256-bit encryption key
+
+	b) Lexicons are specific to a region. You will need to upload Lexicon in each region where you need to use it. For a single text which appears multiple times in the content, you can create an alias using multiple Lexicons to have different speech
+
+	c) Using SSML tags, we can control the speech generated by Amazon Polly. In the above example, using SSML tags, convert commas to period & tag words and paragraphs as “Strong”, will help to control the speech speed, adds appropriate pause & emphasis on appropriate words slowing speaking rate.
+
+
+Test-5:
+------
+
+	a) Using AWS VPN CloudHub, VGW can be used to connect multiple locations. Each location using existing Internet link & customer routers will set up a VPN connection to VGW
+
+	b) Lambda@Edge can be a scalable solution to segregate different types of users accessing web applications. Amazon CloudFront can be used to cache web content from the origin server to provide low latency access to users
+
+	c) For each VPN Tunnel, AWS provides two different VPN endpoints. ECMP (Equal Cost Multi Path) can be used to carry traffic on both VPN endpoints which can increase performance & faster data transfer.
+
+	d) Amazon Kinesis Firehose s scalable option to load data to analytical tools like Amazon Redshift from multiple sources. Amazon Redshift can be used for complex analytical queries for large amounts of data
+
+	e) To restrict all users to invite external users and to share WorkDoc links publicly, you can create a Power user who will be responsible to perform this activity.
+
+	f) FIFO queue uses Message Deduplication ID & Message Group ID per message. Message Deduplication ID is used as a token while sending messages. The message Group ID is used as a tag, based upon various groups so that messages in a group process in an orderly manner.
+
+	g) AWS Batch Job sends log information to CloudWatch logs which requires awslogs log driver to be configured on compute resources having customized AMI. In case of Amazon ECS-optimized AMI, these drivers are pre-configured
+
+
+Test-6:
+-------
+	a) To automatically trigger code pipeline with changes in the source S3 bucket, Amazon CloudWatch Events rule & AWS CloudTrail trail must be applied
+
+	b) use EFS Mount helper to encrypt data in transit.
+
+	c) snapshots are incremental backups
+
+	d) Network Load Balancers, millions of simultaneous sessions can be established with no impact on latency along with preserving client IP address. To negotiate TLS connections with clients, NLB uses a security policy which consists of protocols & ciphers.
+
+	e) for shorter duration of connection between VPC's you can use VPC peering
+
+
+final Test:
+-----------
+
+	a) Amazon EBS volume is automatically replicated within its Availability Zone to protect you from component failure, offering high availability and durability
+
+	b)	SSE-S3 requires that Amazon S3 manage the data and master encryption keys.
+		SSE-C requires that you manage the encryption key.
+		SSE-KMS requires that AWS manage the data key but you manage the master key in AWS KMS.
+
+	c) for any route table, the local route cannot be edited or deleted.
+
+	d) security groups are stateful, no need to allow outbound traffic.
+
+	e) Working with VPC peering in Amazon EFS. and VPC peering allows (IPv4 & IPv6) traffic.
+
+	f) Sharding is a common concept to split data across multiple tables in a database.
+
+	g) VPC endpoints are region specific. supported within the same region only.
+
+
+Both the ALB and NLB support WebSockets. However, only the ALB supports HTTP/HTTPS listeners.
+
+Athena and Redshift spectrum for the complex quiries
+
+API Gateway supports multiple mechanisms for controlling and managing access to your API. These include resource policies, standard IAM roles and policies, Lambda authorizers, and Amazon Cognito user pools.
+
+
+
+instance type can be changed if it is EBS volume type
+AMI can taken without stopping the instance if only "no reboot" option is checked
+
+Messages you submit to SQS queues can be in plain text (unformatted) or in JSON or XML format. Other formats aren't supported.
+
+An availability zone is grouping of AWS Resources in a specific region; an edge location is a specific resource within the AWS region.
+
+if the CloudFront origin is hosted in AWS such as EC2, the origin fetches are free.
+
+Section wise:
+S3:
+	a) S3 offers Eventual consistency for overwrite PUTs and DELETEs in all regions.
+	b) S3 DOES NOT offer strong consistency for s3 objects, Dynamo DB offers.
+	c) Read after write consistency is only provided for NEW object PUTs.
+	d) 3500 PUT/POST/DELETE and 5500 GET per second per prefix in bucket.
+	e) if a bucket policy contains Effect as Deny, you must whitelist all the IAM resources which need access on the bucket. Otherwise, IAM resources cannot access the S3 bucket even if they have full access. 
+
+	f) user defined meta data must begins with "x-amz-meta"
+
+	g) For providing access to S3 log delivery group, You need to explicitly add the bucket policy with ARN is whiltelisted in the deny statement of bucket policy.
+
+	h)  bucket.s3.aws-region.amazonaws.com       ----> Virtual hosted style
+			   s3.aws-region.amazonaws.com/bucket ---> Path based (region specific)
+
+	i) In the versioning enabled bucket, to restore deleted object, delete the delete marker on the object.
+	j) S3 events supports destination (SNS, SQS, Lambda)
+	k) for cross region replication both buckets must have versioning enabled.
+
+
+VPC:
+	a) whenever a subnet is created by default, it is associated with the main route table. We need to explicitly associate the subnet to the custom route table if different routes are required for main and custom route tables
+
+	b) VPC Endpoint always takes precedence over NAT Gateway or Internet Gateway
+	c) VPC endpoints doesn't support cross region requests.
+	d) VPC endpoint has a policy which by default allows all actions on all S3 buckets.
+	e) The ports 1024 – 65535 are called the “ephemeral ports”. These ports are randomly selected to allow return traffic for a request. So, if a request comes to the server on port 80, the request also specifies a random port between 1024 – 65535 for the return traffic.
+
+	f) Ports with numbers 0–1023 are called system or well-known ports.
+
+	g) You cannot route traffic to a NAT gateway through a VPC peering, a VPN connection, AWS Direct connect.
+
+	h) using another VPCs NAT Gateway is not supported in AWS.
+
+	i) enableDnsHostname, enableDnsSupport to support DNS for VPC
+
+	j) You can create a flow log for 
+		-- VPC
+		-- Subnet
+		-- Network interface
+	k) NACL at subnet level support allow /deny  both `rules
+	l) Security group rules are always permissive; you can't create rules that deny access and stateful
+
+
+Aamazon EFS: 
+	--You can now connect to Amazon EFS file systems from EC2 instances in other AWS regions using an inter-region VPC peering connection, and from on-premises servers using an AWS VPN connection.
+
+	a) You can mount an Amazon EFS file system on instances in only one VPC at a time. However you can create new VPC within the same region and establish a VPC connection between them and You can mount this EFS to newly launched VPC instances.
+
+	b) Both the file system and VPC must be in the same AWS Region.
+
+	c) Open port 22 on EC2 security group, and open port 2049 (NFS) on EFS SG
+
+	d) It support encrypting data at rest, it can only be done during EFS Creation.
+
+	e) EFS mount helpers are using to enalbe encryption during tansit.
+
+	f) For EFS throughput mode, you can use throughput mode = provisined.
+
+	g) use cases: Bigdata and analytics, media processing workflows, content management, web serving, and home directoris
+
+	Amazon EFS offers two performance modes. You must select a file system's performance mode when you create it.
+	i) General Purpose Performance Mode:(default mode)
+
+		General Purpose is ideal for latency-sensitive use cases, like web serving environments, content management systems, home directories, and general file serving
+
+	ii) Max I/O Performance Mode: (Latency is not a concern)
+
+		Max I/O mode can scale to higher levels of aggregate throughput and operations per second with a tradeoff of slightly higher latencies for file operations. Highly parallelized applications and workloads, such as big data analysis, media processing, and genomics analysis
+
+	Note:
+	1. An Amazon EFS file system's performance mode can't be changed after the file system has been created.
+	2. Amazon EFS file system is billed and metered the same, regardless of your performance mode.
+	3. In EFS security group maintain a major role.
+	4. Encryption at rest option can only be set during EFS creation
+	5. For web sites with dynamic user interactions, using Amazon EFS is an ideal option
+
+Amazon ECS:
+	-- Cluster ---> container1, container2 ----> EC2 instances1,2,3...etc
+	-- Task is a collection of containers,that runs together as an application.
+
+	a) task definition: JSON template that describes containers which forms your application.
+	b) customers will have control over AWS ECS instances, can install 3rd party monitoring tools.
+	c) ECS supports Interface VPC endpoints, Container instances need external network access to communicate with the amazon ECS service endpoints, if no public IP assigned use NAT 
+
+	d) Cluster: Group of ec2 instances
+
+
+AWS APIGateway:
+
+	a) use VPC links to integrate on premise backend solutions through DirectConnect and private VPC
+	b) Gateway controlling access mechanisms
+		-- Resource policy (other AWS accounts, IP or CIDR, VPC or VPC endpoints)
+		-- Lambda AUthorizers
+		-- Usage plans
+		-- Cognito user pools
+		-- Client side SSL
+		-- Standared AWS IAM roles and policies.
+	c) API automatically protects DDoS attacks.
+
+
+AWS Lambda:
+	a) If the lambda function is in private VPC, you must have NAT Gateway of VPC Endpoint to communicate with S3.
+	b) for aynchronous invocations. Lambda queues the event before passing it to your function, if error occurs lambda handle retries, and can send failed evets to dead letter queue that you configured. Lambda supports only standard Queues.
+
+	c) /tmp space for each Lambda function is 512 MB.
+
+	d) Kinesis, DynamoDB, SQS are poll based Supported Lambda services.
+
+	e) aliases is used to create different versions for single lambda function for testing purpose(like pointers)
+	   Users can access the function version using the alias ARN.
+
+	d) Lambda function policy cannot be edited from AWS COnsole.
+
+	e) ENI capacity = PeakLoad * (Memory in GB/3 GB)  IP addresses.
+
+	f) Lambda has reserved environment variables, that cannot be changed.
+
+	g) with snychronous invocation,the invoking application receives a 429 is responsible for retries.
+
+
+SQS,SNS,STS:
+
+	a) FIFO Queue never introduces duplicate messages.
+	b) STS does not generate Git credentials for IAM users
+	c) Adding filter policy to the department which you don't want to send the notificaitons.
+
+
+ELB and AutoScaling:
+
+	a) You can connect a public-facing load balancer to EC2 instances that have private IP addresses.
+
+Route53:
+	a) Route53 cannot route traffic to Cloudwatch.
+	b) A Record points name to a specific IP address.
+	c) A CNAME record (Cannonical record) points a name to another name. Typically a complex name with alphanumeric characters can be shortened to a user understandable format
+	d) Monitorig: Cloudwatch, CloudTrail and Route53 dashboard.
+	e) Rout53 health checks: Endpoints, Sate of Cloudwatch Alarm, State of other health checks
+
+
+ECS is a docker orchestration service.
+VPC flow logs can capture information about IP traffic going to and from the netwrok interaface in VPC
