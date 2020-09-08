@@ -4,6 +4,8 @@
 2049 --> EFS NFS 
 
 
+
+
 AWS CloudFormation:
 	a) Cloud formation Drift Detection can be used to detect changes made to AWS resources outside the Cloud formation template
 
@@ -70,7 +72,7 @@ AWS CloudHSM:
 Lambda@Edge:
 	Lambda@Edge can be a scalable solution to segregate different types of users accessing web applications. Amazon CloudFront can be used to cache web content from the origin server to provide low latency access to users.
 
-EBS Snapshots:
+EBS & Snapshots:
 	a) use cases:
 		i) Geographic expansion
 		ii) Migration
@@ -85,22 +87,38 @@ EBS Snapshots:
 	f) Data stored on EBS volumes are automatically and redundantly stored in multiple physical volumes in the same availability zone as part of the normal operations of the EBS service and at no additional charge
 	g) You can increase the size of exisitng EBS volume. 
 
+	HDD : can be used to Lowest cost (500 GiB to 16 TiB)
+	Throughput optimized HDD: Lowest cost for frequently accessed throughput intensitive workloads.
+	Big data, data warehouse, log processing,
+	Cold HDD: Lowest cost volume for less frequently accessed workloads.
+
+	SSD Provisioned IOPS: (4 GiB to 16 TiB)
+	Highest performance (10,000 IOPS), mission critical, low latency, high throuput workloads (160 Mibs).
+
+	GP SSD: (1 GiB to 16 TiB)
+	system boot volumes, low latency work loads, devlopment and test environments.
+
 AutoScaling Group:
 	a) You cannot modify launch configuration after you have created it.
 	b) With application load balancer, cross-zone load balancing is always enabled.
 	c) pridictive scaling option can be used to analyze the history scaling pattrens.
+	d) Adding lifecycle hooks to autoscaling group puts the instance up to 1 hr into wait state before termination.
+
 
 AWS Kinesis Firehose:(Nearly Real time but not exactly realtime)
-	Amazon Kinesis Firehose s scalable option to load data to analytical tools like Amazon Redshift from multiple sources. Amazon Redshift can be used for complex analytical queries for large amounts of data.
+	Amazon Kinesis Firehose is scalable option to load data to analytical tools like Amazon Redshift from multiple sources. Amazon Redshift can be used for complex analytical queries for large amounts of data.
 
 AWS RDS:
-	a) Multi-AZ ---> synchronous replication.
+	a) Multi-AZ ---> Synchronous replication.
 	b) Read Replica ---> Asynchronous replication.
 	
 
-Stored Gateway Volumes:
-	-- if you need low latency access to entire datset from on premise use gateway stored volume.
-	-- for storing/backup data in S3 or caching the frequently accessed data then use gateway cached volume.
+Stored Gateway Cached Volumes: (Data stores in S3 primary)
+	Gateway-cached volumes let you use Amazon Simple Storage Service (Amazon S3) as your primary data storage while retaining frequently accessed data locally in your storage gateway.
+	
+
+Stored Gateway Volumes: (Data stores in Local on Premises and backup to S3)
+	
 
 Global Accelerator:
 	a) Global accelerator is good fit for non-HTTP use cases, such as gaming (UDP),IoT (MQTT),VoIP,as well as for HTTP use cases like static IP address or fast regional failover.
@@ -140,7 +158,7 @@ AWS Data Sync can be used for huge amounts of data transfer between on-premise a
 to pre-warm EC2 instances, EC2 hibernate (doesnt support AutoScaling group) is used.
 
 
-To remove Master Account from an organization, you must delete the organization,
+To remove Master Account from an organization, you must delete the organization.
 
 
 
@@ -170,20 +188,20 @@ test-2:
 
 	f) for RTMP distribution, signed URLS can be used to control access to private content by specifitying enddate, time & IP adress range.
 
-	g) Using AWS VPN is the fastest & cost-effective way of establishing IPSEC connectivity from on-premise to AWS
+	**g) Using AWS VPN is the fastest & cost-effective way of establishing IPSEC connectivity from on-premise to AWS
 
 
 test -3:
 -------
 	a) To move objects from Glacier Deep Archive to different storage classes, first need to restore to original locations using Amazon S3 Glacier console & then use lifecycle policy to move objects to required S3 Intelligent-Tiering storage class.
 
-	b) With versioning enabled S3 buckets, each version of an object can have a different retention period.
+	b) With versioning enabled S3 buckets, we can set each version of an object can have a different retention period.
 
 	c) AWS Managed Microsfot AD can be used as the active directory over VPN or Direct Connect.
 
 	d) When EC2 heibernation, EC2 instance retain private IPv4 & Elastic IP address assigned to this instance but releases public IPv4 address.
 
-	e) AWS Direct Connect doesnot involve the intenet and does not encrypt traffic in trans-it
+	e) AWS Direct Connect does not involve the intenet and does not encrypt traffic in trans-it
 
 	f) A VPC VPN Connection utilizes IPSec to establish encrypted network connectivity between your intranet and Amazon VPC over the Internet.
 
@@ -195,6 +213,10 @@ test -3:
 
 	j) The Fargate launch type allows you to run your containerized applications without the need to provision and manage the backend infrastructure. Just register your task definition and Fargate launches the container for you
 
+	k) Amazon S3 Glacier Select can be used to query specific data from Amazon S3 Glacier instead of querying whole data
+
+	l) S3 Glacier Valut lock policy can be modified only once.
+
 
 Test 4:
 --------
@@ -204,6 +226,10 @@ Test 4:
 	b) Lexicons are specific to a region. You will need to upload Lexicon in each region where you need to use it. For a single text which appears multiple times in the content, you can create an alias using multiple Lexicons to have different speech
 
 	c) Using SSML tags, we can control the speech generated by Amazon Polly. In the above example, using SSML tags, convert commas to period & tag words and paragraphs as “Strong”, will help to control the speech speed, adds appropriate pause & emphasis on appropriate words slowing speaking rate.
+
+	d) **To monitor Redshift performance Cloudwatch and AWS Trusted Advisor.
+
+	e) S3 objects long lived, infrequently accessed and non-crtical and retirving time withing milliseconds use one-zone IA
 
 
 Test-5:
@@ -226,9 +252,9 @@ Test-5:
 
 Test-6:
 -------
-	a) To automatically trigger code pipeline with changes in the source S3 bucket, Amazon CloudWatch Events rule & AWS CloudTrail trail must be applied
+	**a) To automatically trigger code pipeline with changes in the source S3 bucket, Amazon CloudWatch Events rule & AWS CloudTrail trail must be applied
 
-	b) use EFS Mount helper to encrypt data in transit.
+	b) 
 
 	c) snapshots are incremental backups
 
@@ -250,18 +276,16 @@ final Test:
 
 	d) security groups are stateful, no need to allow outbound traffic.
 
-	e) Working with VPC peering in Amazon EFS. and VPC peering allows (IPv4 & IPv6) traffic.
+	e) You can combinely Work with VPC peering in Amazon EFS. and VPC peering allows (IPv4 & IPv6) traffic.
 
 	f) Sharding is a common concept to split data across multiple tables in a database.
 
-	g) VPC endpoints are region specific. supported within the same region only.
+	**g) VPC endpoints are region specific. supported within the same region only.
 
 
 Both the ALB and NLB support WebSockets. However, only the ALB supports HTTP/HTTPS listeners.
 
 Athena and Redshift spectrum for the complex quiries
-
-API Gateway supports multiple mechanisms for controlling and managing access to your API. These include resource policies, standard IAM roles and policies, Lambda authorizers, and Amazon Cognito user pools.
 
 
 
@@ -290,7 +314,7 @@ S3:
 			   s3.aws-region.amazonaws.com/bucket ---> Path based (region specific)
 
 	i) In the versioning enabled bucket, to restore deleted object, delete the delete marker on the object.
-	j) S3 events supports destination (SNS, SQS, Lambda)
+	j) S3 events supports following destination (SNS, SQS, Lambda)
 	k) for cross region replication both buckets must have versioning enabled.
 
 
@@ -314,8 +338,8 @@ VPC:
 		-- VPC
 		-- Subnet
 		-- Network interface
-	k) NACL at subnet level support allow /deny  both `rules
-	l) Security group rules are always permissive; you can't create rules that deny access and stateful
+	k) NACL at subnet level support allow /deny  both rules
+	l) Security group rules are always permissive; you can't create rules that deny access and these are stateful
 
 
 Aamazon EFS: 
@@ -329,7 +353,7 @@ Aamazon EFS:
 
 	d) It support encrypting data at rest, it can only be done during EFS Creation.
 
-	e) EFS mount helpers are using to enalbe encryption during tansit.
+	e) EFS mount helpers are using to enable encryption during tansit.
 
 	f) For EFS throughput mode, you can use throughput mode = provisined.
 
@@ -347,7 +371,7 @@ Aamazon EFS:
 	Note:
 	1. An Amazon EFS file system's performance mode can't be changed after the file system has been created.
 	2. Amazon EFS file system is billed and metered the same, regardless of your performance mode.
-	3. In EFS security group maintain a major role.
+	3. In EFS security group plays a major role.
 	4. Encryption at rest option can only be set during EFS creation
 	5. For web sites with dynamic user interactions, using Amazon EFS is an ideal option
 
@@ -377,6 +401,7 @@ AWS APIGateway:
 
 AWS Lambda:
 	a) If the lambda function is in private VPC, you must have NAT Gateway of VPC Endpoint to communicate with S3.
+
 	b) for aynchronous invocations. Lambda queues the event before passing it to your function, if error occurs lambda handle retries, and can send failed evets to dead letter queue that you configured. Lambda supports only standard Queues.
 
 	c) /tmp space for each Lambda function is 512 MB.
@@ -388,7 +413,7 @@ AWS Lambda:
 
 	d) Lambda function policy cannot be edited from AWS COnsole.
 
-	e) ENI capacity = PeakLoad * (Memory in GB/3 GB)  IP addresses.
+	e) ENI capacity = PeakLoad * (Memory in GB/3 GB)  IP addresses (CIDR block).
 
 	f) Lambda has reserved environment variables, that cannot be changed.
 
@@ -399,7 +424,7 @@ SQS,SNS,STS:
 
 	a) FIFO Queue never introduces duplicate messages.
 	b) STS does not generate Git credentials for IAM users
-	c) Adding filter policy to the department which you don't want to send the notificaitons.
+	c) You can Add filter policy to the department which you don't want to send the notificaitons in a subscription.
 
 
 ELB and AutoScaling:
@@ -416,3 +441,45 @@ Route53:
 
 ECS is a docker orchestration service.
 VPC flow logs can capture information about IP traffic going to and from the netwrok interaface in VPC
+
+Amazon EMR provides a managed Hadoop framework that makes it easy, fast, and cost-effective to process a vast amount of data across dynamically scalable Amazon EC2 instances.
+
+The General Purpose SSD would be suitable for development and test environments and the IOPS SSD for business critical applications
+
+On CloudFront WAF portects Cross site scripting and SQL Injection attack.
+
+Amazon SFx for windows file server:
+-- Amazon fully managed native windows file server
+-- Map a file share
+	a) Directly integrate with your Amazon FSx file systems with your organizations Active Directory (on-premises or in cloud)
+		i) Authentication: 
+		Your users continues to access file shares by authenticating with their existing AD credentials.
+		ii) Authorization: 
+		You can migrate and use your existing file and folder ACLs, and your share level access control as is, without any modificatins needed.
+
+	b) supports daily automated backups.
+
+
+AWS DataSync:(Data transfer between aws and on-premises)
+
+	a) Fully automated and integrated with AWS Services.
+	b) Performs integrity checks on data transfered.
+	c) Data is encrypted in transit with TLS.
+	d) Accelerate data transfer up to 10X faster than CLI.
+	e) Preserve file level metadata and attributes when transferring.
+
+	DataSync with FSx:
+		a) Can copy data over internet, Direct connect, VPN
+		b) Can perform full and incremental transfer of changing data
+		c) Can schedule data trasfer during off-peak hours
+		d) Can filter which folders, files and objects are trasferred.
+
+Questions on AWS Solutions Architect on Realtime on 27th Auguest:
+
+ALB & NLB
+CLoudFront Attacks
+Amazon SFx vs EFS 
+Microsoft AD
+Storage Gateway
+AWS Batch
+DynamoDB
