@@ -1,0 +1,6 @@
+#!/bin/bash
+sudo su
+yum install httpd -y
+echo "<html><h1>This is the home page of Image Processing Server</h1></html>" > /var/www/html/index.html
+echo "<html><h1>Processing your IMAGES from server...</h1></html>" > /var/www/html/images.html
+service httpd start
