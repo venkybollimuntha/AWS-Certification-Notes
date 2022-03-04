@@ -1,0 +1,772 @@
+
+
+AWS Health 
+
+Use EventBridge (Cloudwatch Events) to react the changes to the AWS Health Events in your AWS Account.
+
+Eg: Receive email notifications when EC2 instances in your AWS account are scheduled for updates.
+
+
+AWS Control Tower:
+------------------
+
+Easy way to set up and govern a secure and compliant multi-account AWS Environment based on best practices.
+
+Benefits:
+	Automate the set up of your enivronment in a few clicks.
+
+	Automate ongoing policy management using guardrails
+	Detect policy violates and remediate them
+	Monitor compliance through an interactive dashboard.
+
+AWS Control Tower runs on top of AWS Organizations
+
+It automatically sets up AWS Organizations to organize and implement SCPs.
+
+
+AWS Service Catalog:
+--------------------
+
+Create, organize, and govern your curated catalog of AWS products.
+It allows organizations to create and manage catalogs of IT services that are approved for use on AWS. These IT services can include everything VM,servers, software, database, 
+
+
+Ensure compliance with corporate standards
+Help Employees quickly find and deploy approved IT services.
+Centrally manage IT service lifecycle.
+Manage all of your application information on AWS
+
+
+AWS Compute Optimizer:
+----------------------
+Reduce costs and imporve performance by recommending optimal AWS resources for your workloads.
+
+AWS Organization -Tag policies are use to standardize tags across resources in all AWS accounts inside your AWS Organization.
+
+
+
+AWS RDS:
+----------
+1. Backup Vs Snapshot
+----------------------
+Backups:
+	- continuous and allow point in time recovery.
+	- happen during maintinance window.
+	- even after delete DB instance, you can retain automateed backups.
+	- backup retention period you set (0-35 days)
+
+Snapshots:
+	- Snapshots takes IO operations and can stop the database from seconds to minutes
+	- snapshots taken on Multi AZ don't impact on master DB
+	- you can share & copy the DB snapshots
+	- Manual snapshots don't expire.
+
+
+
+
+2. Multi AZ Vs Read Replica:
+---------------------------
+Multi AZ:
+	- Disastor Recovery strategy
+	- Syncronous Replication between master and Stand by
+	- Single DNS name for both Databases.
+	- If master AZ failes, automatically stand by becomes master 
+
+Read Replica: (upto 5 allowed)
+-------------
+	- To perform Read only queries.
+	- Asynchronous Replication betwwen Master and Read replica
+	- Within AZ, Cross AZ, or Cross Region.
+	- Replicas can be isolated and promoted as its own DB.
+	- with in Same Region AZ Data transfer charges are free.
+
+RDS Proxy: (support Postgres & MySQL)
+------------
+By default, your Lambda function is launched outside your own VPC (in an AWS-owned VPC)
+So it cannot access resources in your VPC (RDS, ElasticCache, internal ELB....)
+
+When using Lambda functions with RDS, it opens and maintains a database connection, resulting "TooManyConnections"
+
+Wirh *RDS Proxy* you no longer need code that handles cleaning up idle connections and managing connection pools.
+
+Supports IAM authentication or DB authentication, auto-scaling.
+
+
+Setup:
+------
+RDS proxy is an basically a EC2 instance that hosted in public subnet, which communicate to RDS instance in private subnet.
+
+Lambda ==> RDS Proxy (public subnet) ==> RDS DB instance (private subnet)
+
+
+
+ElastiCache:
+------------
+Redis:
+	- Multi AZ with Auto-Failover
+	- Read replicas to scale reads and have high availablity
+	- Data durability using AOF persistence
+	- Backup and restore features
+
+MemCacheD:
+	- Multi node for partitioning of data (sharding)
+	- No high availability
+	- non persistent
+	- No backup and restore
+	- Multi-threaded architecture.
+
+
+Amazon EventBridge vs CloudWatch Events:
+----------------------------------------
+Amazon EventBridge builds upon and extends CloudWatch Events
+
+it uses the same service API and endpoint and the same underlying service infrastructure.
+
+EventBridge allows extension to add event buses for your custom appliations and your third-party SaaS apps
+
+EventBridge has Schema Registry capability.
+over time, the CloudWatch Events name will be replaced with EventBridge.
+
+
+ServiceQuota Vs Trusted Advisor:
+---------------------------------
+ServiceQuota:
+	- Central Managed Service for cloudwatch alarams to notifies close to a service quota value threshold with in your ACCOUNT
+
+	- Create cloudwatch alarams on Service Quota control.
+
+Trusted Advisor: (Best suitable for Enterprise & Business plan customers)
+	- Limited no.of Service limits checks in Trusted Advisor
+	- Trusted Advisor publishes its checks results to Cloudwatch.
+
+CloudTrail Events: (By default 90 days retention)
+------------------
+Management Events
+	- Operations that are performed on resources in your AWS Account
+	- change security groups, IAM events, Deletion of resources
+	- By default trails are configured to log management events
+	- Can separate Read and Write events.
+
+Data Events:
+	- By default data events are not logged (because of high volume operations)
+	eg: S3 object level activities , put objects
+	AWS Lambda function execution activity.
+
+CloudTrail Insights events:
+	- To detect unusual activity in your account
+	- Eg: inaccurate resource provisioning
+	- hitting service limits
+	- Bursts of AWS IAM actions
+	- Gaps in periodic maintinance activity.
+
+
+AWS Config:
+-----------
+
+- Helps with auditing and recording compliance of your AWS resources
+- Helps record configurations and changes over time.
+- eg: change in Security groups, publice access to S3 bukets
+- Per region service. 
+
+Note: It does not prevent actions from happening (Just notify to Adminstrator)
+
+Config rules Remediation:
+-------------------------
+- Automate remediation of non-compliant resources using SSM Automation Documents
+- Use AWS-Managed Automation Documents or Create custome Automation Documents (you can invoke Lambda function as well)
+
+- Remediation Retries mechanism up to 5 times.
+
+############## Security and Compliance for SysOps######
+
+DDOS Protection on AWS:
+-----------------------
+1. AWS Shield Standard:
+	- Protect against DDOS attack for your website and applications, for all customers at no additional costs.
+
+2. AWS Shield Advanced
+	- 24/7 premium DDos Protection
+
+3. AWS WAF
+	- Filter specific requests based on rules
+	- Eg: based on IP, HTTP Headers, body, and Queryparameters
+	- SQL injection and Cross-site Scriptiing
+	- Size constraints, geo-match 
+	- Rate based rules for DDos protection
+
+4. CloudFront and Route 53:
+	- Combined with AWS Shield, provides attack mitigation at the edge global level.
+
+Amazon Inspector:
+-----------------
+- Automated Security Assessments for EC2 instances
+- Agent must be installed in EC2 instance.
+
+Logging in AWS:
+---------------
+- Cloud Trail logs: trace all API calls
+- Config Rules - for config & Compliance over time
+- CloudWatch Logs : for full data retention
+- VPC flow logs: IP traffic within your VPC
+- ELB access logs - metadata of request made to your load balancer
+- CloudFront logs: web destribution access logs
+- WAF logs: full logging of all requests analyzed by the service
+
+Amazon GuardDuty:
+------------------
+- Intelligent threat discovery to protect AWS Account and notify you of suspicious account activity.
+- uses Machine Learning algorithms, anomaly detection, 3rd party data
+- one click to enable (30 day free trail) no need to install any software.
+
+- can analyze:
+	-CloudTrail logs
+	-VPC flow logs
+	- DNS logs
+
+- Can portect against Crypto Currency attacks.
+
+
+Aamzon Macie:
+------------
+- fully managed data security and data privacy service uses ML and pattern matching to discover SENSITIVE data in S3 buckets.
+
+
+SSM Parameter Store vs Secrets Manager 
+
+Secrets Manager ($$$):
+	1. Automatic rotation of secrets with AWS Lambda
+	2. KMS encryption is mandatory
+	3. can integration with CloudFormation
+
+SSM Parameter Store ($):
+	1. simple API
+	2. No secret rotation
+	3. KMS encryption is optional
+	4. Can Integration with CloudFormation
+	5. Can pull a secrets manager secret using the SSM Parameter Store API
+
+#############   VPC ######################
+
+AWS VPC Reachability Analyzer:
+-----------------------------
+Helps to identify and troubleshoot the network connection in VPC.
+
+VPC Peering:
+----------
+- Privately connect two VPC's (Cross Account / Same Account / same region / different region) using AWS network.
+- VPC peering is NOT transitive
+- You must update route tables in each VPC subnets to ensure EC2 instances can communicate each other.
+- you can reference security group in a peered VPC (work cross accounts - same region)
+
+VPC Endpoints:  (AWS PrivateLink)
+-----------------------------------
+
+- Resources in your VPC wants to talk resources outside (let say in 1000's) in the VPC PRIVATELY, we can use VPC endpoints.
+
+- Does not require VPC peering, IGW, NAT, Route Tables.
+
+- Requires NLB(Service VPC), ENI (customer VPC) or GWLB
+	Types of Endpoints;
+	-------------------
+		a) Interaface endpoints;
+		------------------------
+		- Provisions an ENI (Private IP address) as an entry point (must attach a security group)
+
+		- Support most AWS Services
+
+		b) Gateway Endpoints:
+		---------------------
+		- Provisions a gateway and must be used as a target in a route table.
+		- Supports both S3 and DynamoDB
+
+NOTE: AWS CLI by default uses the us-east-1 region.
+
+Site to Site VPN Connections:
+-----------------------------
+
+TO connect on premise data center to AWS Cloud VPC we can use site to site VPN connections.
+
+Even though the traffic goes on public network, its encrypted.
+
+NOTE: 
+Entry must be put on the route table
+if you need to ping your EC2 instances from on-primises make sure you add the ICMP traffic in Security groups
+
+
+AWS VPN CloudHub:
+-----------------
+
+Provides secure communication between multiple sites, if you have multiple VPN connections
+
+- low-cost-hub-and-spoke model for primary or secondary network connectivity between different locations (VPN only)
+
+- its a VPN connection so it goes over the public network
+
+- To set it up, connect multiple VPN connections on the same VGW, setup dynamic routing and configure route tables.
+
+
+Transit Gateway:
+----------------
+ 
+Transitive peering connection for VPC, VPN & DX
+
+
+VPC Traffic Mirroring:
+----------------------
+Allows you to capture and inspect network traffic in your VPC
+
+Route the traffic to security appliances that you manage.
+
+Source and Target can be in the same VPC or differnt VPCs (VPC peering)
+
+use cases: content inspection, threat monitoring, troubleshooting.
+
+Egress-only internet Gateway:
+-----------------------------
+used for IPv6 only
+similar to a NAT Gateway but for IPv6
+
+
+
+Management & Governance - Cloudwatch, CloudTrail, Config, Control Tower:
+--------------------------------------------------------
+
+1. Amazon Cloudwatch Application insight helps you monitor applications deployed in Amazon EC2 with backend as SQL server. 
+
+It creates automated dashboards based on errors monitored from all the components of an application.
+
+2. ServiceLens can be used to enchance application health monitoring by integrating traces, metrics, logs, alarms.
+
+
+
+
+1. For Lambda functions,SNS,SQS,Cloudwatch logs configured as a target to EventBridge, you need to provide resource-based policy. IAM Roles will not work.
+For kinesis streams, EventBridge relies on IAM roles
+
+
+**********************************
+Identity-based (user, group, role)
+resource-based (S3,SQS,SNS..etc)
+
+IAM Policies: (easier to manage)
+-------------
+Its better to use IAM policies when providing access from some user/external/system/user managed instances
+
+Resource Policies:
+-------------------
+For providing access in between AWS managed services use resource policies.
+
+Permission Evaluation:
+----------------------
+AWS first checks all policies for a Deny. if one exists, then the request is denied. THen AWS checks for each Allow. If at least one policy statemen allows the action in the request, the request is allowed. it doesn't matter whether the ALlow is in the identity-based policy or the resource-based policy.
+
+For requests made from one account to another, the requester in Account A must have an identity 
+
+***********Practice 1******************************
+
+2. configure "Retain Until Date" in the object lock settings to a date that is 5 years away from the current date.
+
+3. By default Storage gateway uses Amazon S3 Managed Encryption keys to encrypt all data
+
+4. AMI Share:
+-------------
+	AMIs with unencrypted volumes
+	Volumes encrypted with Customer-managed CMK
+
+	You do not need to share EBS snapshots that an AMI references in order to share the AMI
+
+5. resizing of instance is only possible if the root device for your instance is an EBS volume
+
+6. By default cloudtrail logs S3 bucket-level API calls that were made in the last 90 days, but not log requests made to objects.
+
+7. writing to tables on a read replica can break the replication
+
+8. On-Demand Capacity Reservation important points to remember
+	- Capacity Reservation do not offer any billing discounts
+	- It enable you to reserve capacity for your EC2 instances in a specific Availability Zone for any duration
+
+9. If an IAM user, with full access to IAM and Amazon S3, assigns a bucket policy to an Amazon S3 bukcet and doesn't specify the AWS account root user as a principal, the root user is denied access to that bucket.
+
+10. Status checks are built into Amazon EC2, so they cannot be disabled or deleted.
+
+11. CloudWatch Synthetics to create canaries, configurable scripts that run on schedule which create CloueWatch metrics to track and monitor the services.
+
+12. DisableApiTermination attribute prevent you from terminating EC2 instance by console, API, and CLI. But not from instance SSH OS command.
+
+13. You can retrieve custom metrics from your applications or servers using StatsD and collectD protocols.
+	StatsD supports -Linux, windows
+	collectd support - Linux
+
+14. To recover an imparied instance automatically using SSM, use AWSSupport - ExecuteEC2Rescue document.
+
+15. If your template contains custom named IAM resources, don't create multiple stacks resuing the same template. IAM resources must be globally unique within your account.******
+
+16. Client.InternalError: Client error on launch error is thrown when an ASG attempts to launch an instance that has an encrypted EBS volume, but the service-linked role does not have access to teh customer managed CMK used to encrypt it.
+
+
+17.After you increae the size of an EBS volume, you must extend the file system to a larger size using commands.
+
+18. You can bring an existing resources into AWS CloudFormation management using resource import
+
+
+
+##################### Practice 2 #######################
+
+
+1. File Gateway offers SMB or NFS-based access to data in Amazon S3 with local caching.
+
+2. S3 allows for an in-place switch from unencrypted to encrypted without impatcing the existing operations
+
+3. Golden AMI is an AMI that you standardize through configuration, consistent, security patching and hardening, agents for logging, securty, performance monitoring, etc..
+
+4. If you share an AMI from account A to account B, and then dergister the AMI from account A, you can't launch new instances from the AMI in account B.
+
+5. You can allow only SSL connections to your RDS for PostgreSQL database instance by enabling the rds.force_ssl parameter
+
+6. GuardDuty - threat detection service that monitor malicious activity and unauthorized behavior to protect your Account.
+- cloudtrail logs
+- vpc flow logs
+- dns logs
+
+AWS Shield - DDoS Protection services
+
+SSM - gives you visibility and control of your infrastructure. and provides a unified user interface so you can view operational data from multiple serives and allows you to automate operational tasks such as running commands, managing patches, configuring servers across cloud as well as on- premise infrastructure.
+
+7. if your ASG launch process has been suspended or ASG is at maximum cpacity already then no scaling out action takes place.
+
+8. After enabling S3 MFA-Delete you must need it for Permanently delte an object version and suspending versioning.
+
+9. EBS Volume, for greater I/O performance than you achieve with a single volume, RAID 0 can stripe multiple volmus together.
+
+10. InsufficientInstanceCapacity - Try to launch the instance in another AZ.
+	InstanceLimitExceed - Contact AWS support to increase regional EC2 limit.
+
+11. AWS Config is a service that enables you to assess, audit, and evaluate the configurations of your AWS resources. and using EventBridge rule with custom event pattern route the response to an SNS topic.
+
+12. AWS Systems Manager Inventory - tool that can collect metadat of these instances to validate the software running on the instances along with the configurations against their software policy.
+
+
+
+######################### Practice 3 #############################
+
+1. IAM service support only one resource based policy : ROle trust policy
+
+2. Dedicated Host vs Dedicated instances
+
+3. To speedup S3 uploads use 
+	- multipart upload
+	- S3 Transfer acceleration
+
+4. Throughput Optimized HDD and cold HDD volume types cannot be used as a boot volume
+
+5. The maximum ratio of provisioned IOPS to the requested volume size in GiB is 50:1, So for 100 GiB volume size max IOPS is 100*50 = 5000 IOPS
+
+6. SSE-KMS encryption on S3 bukcet provides an audit trail that shows when your CMK was used and by whom. No other S3 encryption support audit trail.
+
+7. The key policy for the CMK must give the external account (or users and roles in the external account) permission to use the CMK.
+
+IAM policies in the external account must delgate the key plicy permissions to its users and roles.
+
+8. SMB or NFS interface access to data in S3 --> File gateway
+
+10. If you want to delete a secret in Secrets manager, its not availble to use same name within 7 days, Or if you need immediately, you delete that secret using CLI permeanently.
+
+11. RDS enhanced monitoring gives OS level metircs
+
+RDS performance insights gives database engine metircs to monitor actual load on a database.
+
+12. Use Amazon S3 inventory reports to list the objects that have failed replication in the S3 buckets.
+
+S3 Storage Lens to aggregates your usage and activity metrics and dashboard
+
+13. You can't enable termination protection for Spot instances
+
+To prevent instances that are part of an Auto Scaling group from terminating on scale in, use instance protection.
+
+14. ALB access logs - used to trace request latency and client IP address
+
+ALB request tracing - to track HTTP requests. 
+
+15. GET requests do not retrieve delete marker objects S3
+
+16. we cannot do spot instances in reboot mode.
+
+17. If you attempt to delete a stack wth termination protection enabled, the deletion fails and the stack - including its status remains unchanged.
+
+18. instance - store instances can be migrated to higher instance types by creating image and launch using that image.
+
+19. KMS CMK deletion key waiting period is 30 days (by default). and can be restore easily within this period.
+
+20. Run AWSSupport - TroubleshootS3PublicRead automation document on AWS Systems Manager to help diagnose issues with accessing objects from a public S3 bucket.
+
+21. In parameters section of cloudformation we cannot put conditions
+
+22. EBS
+
+	- Use seperate EBS volumes fro the OS and your data, even though root volume persistence feature is available.
+
+	- By default, data on a non-root EBS volumes is preserved even if the instance is shutdown or terminated.
+
+23. Storage Gateway 
+	File Gateway:
+	-------------
+	File Gateway presents a file-based interface to S3, which apperas as a network file share. It enables you to store and retrieve S3 objects through Standard file storage protocols. Using File Gateway S3 bucket can be configured as NFS, SMB.
+
+	Volume Gateway: (iSCSI)
+	-------------- 
+	It enables you to create block storage volumes and mount them as iSCSI devices from your on-premises or EC2 application servers. It can run on either cached or stored mode.
+
+24. AWS Backup can be used to centrally manage backup tasks across AWS accounts in your organization
+
+25. 'x-amz-server-side-encryption':'aws:kms'
+
+26. AStack policy applies only during stack updates, it doesn't provide acccess controls. The developer needs to provide access through IAM policies.
+
+27. After you've created a VPC flow log, you cannot change its configuration. Instead, you need to delete the flow log and creat a new one with the required configuration.
+
+
+28. Enable S3 Replication Time Control (S3 RTC), which allows you to set up notifications for eligible objects that failed replication
+
+29. Different versions of a single object can have different retention modes and periods.
+
+When you apply a retention period to an object version explicitly, you specify a Retain Until Date for the object version.
+
+
+
+#################### Whiz Labs Test 2 ##########################
+
+2. Cost and usage reports provides comprehensive cost details for all resources in AWS with Multiple files with flexible column structure
+
+3. AWS WAF can be used as a customized solution to block attacks
+	1. Cross-site scripting
+	2. IP address
+	3. Lenght of requests
+	4. SQL injection
+	5. Geographic match
+	6. String Match
+
+4. Attachingg Vault lock policy is a 2 step process. 
+	i) initiate Valut lock is called and Valut lock policy to the valut & return s a unique lock ID. 
+
+	ii) Post Verification, a complete Vault lock must be initiated within 24 hours using lock ID generated from initiate Valut lock.
+
+5. Bulk retrieval option archive ID is required will be completed in 5-12 hours and has the lowest cost
+
+6. With Metric Math, you can create Amazon CloudWatch graphs querying multiple metrics & display a new graph based upon the math expression you required.
+
+7. Dynamo DB global table to replicate DynamoDB tables btwn different redions
+
+8. While creating trails from console, for member accounts in an AWS Organizations, S3 bukcet is listed only for a master account and not for member accounts.
+Also, for memeber accounts, no additional cross-account access is required.
+
+9. AWS config aggregator can collect data in various regions for multi-account multi-region data aggregation, without need of AWS Organizations
+
+10. Amazon Inspector can be used for assessing vulnerability for any ports & Services on applications installed on EC2 instance which can be assessed from external networks.
+
+11. SCP affects the *Principals* of all accounts withing the organization. It doesnot apply to external users having permission to resources.
+
+12. While performing multipart uploads S3 performs decryption of files & read data from encrypted files to complete multipart uploads.
+to perform this decryption, IAM users (from a different account) must have kms:Decrypt permission along with other permissions
+
+13. while enabling access logs for ALB, S3 bukcet should be specified where logs are cpatured. S3 bucket should be in the same region as that of ALB, but can be owned by different accounts.
+
+
+14. Amazon System manager runbook can be used to take immediate actions for all non-compliant resources evaluated by AWS Config.
+
+
+15. Cache keys need to be spread across all nodes in an ElasticCache for better caching performance. when a new node is added to a cluster, many keys need to be moved, resulting cache miss.
+Whenever new nodes are added to a cluster, consistent hashing can be used to have better caching performance.
+
+
+16. CMK key used for encryption of amazon EBS volume should be in enabled state, else attaching an encrypted EBS volume to an EC2 instance fails.
+
+17. CloudFront provides two types of logs
+	1. Standard logs:
+		Free of cost
+		Provides detailed records of request
+
+	2. Real-Time logs:
+		Deliver logs of the specific fields chosen by the user in seconds using Kinesis Data Streams & are Chargable.
+
+18. Aurora Replicas servers two purposes.
+	1. To scale read operations for the application
+	2. To promote as a Primary instance, in case of failure in the primary instance.
+
+19. For encrypting data at transit for EFS, using mount helper is the simplest way. to enforece the creation of only encrypted EFS file system, IAM conditional key elasticfilesystem:Encrypted can be used to make sure only ecrypted file systems are created.
+
+20. Disaster Recovery (DR):
+--------------------------
+RTO: Recovery time objective
+----------------------------
+Maximum acceptable delay between the interruption of service and restoration of service
+
+
+RPO: Recovery Point objective
+-----------------------------
+Maximum acceptable amount of time since the last data recovery point.
+
+
+		Backup and restore: RPO in hours, RTO in < 24 hours
+		Pilot light: RPO in minutes, RTO in hours
+		Warm Standby: RPO in Seconds RTO in minutes
+		Multi-Region: RPO in Zero, RTO in Zero
+
+21. Default Value is the value reported when no matching logs are found with a metric filter. By setting Default Value as 0, metric data can always be reported, even if there are no matching metric filters with the captured logs.
+
+
+22. Cloudwatch Configuration file consists of three sections.
+
+1. Agent: This section consists of fields for configuration settings of the agent like metice frequency, region to which metric needs to be sent.
+
+2. Metric: Metric section specifies custom metric to be collected.
+
+3. Logs: Logs section specifies the log file which needs to be published to Cloudwatch logs.
+
+
+23****. with Metric alarams (watches only single cloud watch metrics), clients will get notifications via SNS for every alarm in an ALARM state.
+
+Composite alaram (watches multiple metric alarms) as single metric output (helps to reduce number of notifications). But it cannot initiate actions (Eg: scale in/scale out) based upon the ALARM state.
+
+******************************
+
+EBS direct APIs can be used to create EBS snapshots, write data directly to snapshots, read data from snapshots, and identify the difference between two snapshots.
+
+
+There can be an initial performance hit when an EBS volume is created from snapshots. This can be avoided by either of the following
+	- Force the immediate initialization of the entire volume
+	- Enable fast snapshot to restore on a snapshot to ensure that the EBS volumes are fully initialized.
+
+
+Content of the S3 Glacier vaults can be viewed using the list-valuts command from CLI only.
+aws glacier list-vaults --account-id
+
+
+*****************************************
+
+############################ Whiz Labs Practice test 3: #################################
+-----------------
+
+1. Lambda uses COndition keys to specify additional permission controls for the Lambda function.
+
+	- lambda:VpcIds (allow or deny VPC to be used by Lambdsa)
+	- lambda:SubnetIds (Allow or Deny)
+	- lambda:SecurityGroupIds 
+
+2. Amazon Inspector:
+	- Common Vulnerabilities and Exposures
+	- CIS Benchmarks
+	- Security Best Practices
+	- Runtime Behavior Analysis
+Trusted Advisor:
+	- Gives only various recommendations
+
+Config Service:
+	- Configuration changes
+GuardDuty:
+	- Managed threat detection Service
+
+
+3. S3 Server access logs, it is recommended to have the source S3 bucket & target S3 bucket to be separate for easy management of logs. Both these buckets should be owned by a single account & should be in the same AWS region.
+
+4. If you are experiencing evictions with your cluster, it is usually a sign that you need to scale up (use a node that has a larger memory footprint) or scale out (add additional nodes to the cluster) in order to accommodate the additional data.
+
+5.For Versioning enabled buckets, users need to add two lifecycle rule actions for the current and previous versions of objects.
+
+6. DDoSDetected metric of Shield Advanced cloudwatch alarm gives DDoS attack information
+
+7. EventBridge is prefered over Cloudwatch rule:
+	- Custom event bus for a third-party service provider
+	- Archive certian events and replay them when needed.
+
+Read last 10 question carefully in 3rd exam
+************************************************
+######################## WhizLabs 4th ############################
+
+1. EC2 Dedicated Host is a physical server fully dedicated for your use, and gives additional visibility and control over how instances are placed on a physical server. You can consistently deploy your instances to the same physical server over time. You can control no.of cores of the underlying hardware.
+
+
+2. Aurora MySQL Read replica:
+	- Read Replica can be manually created for both Encrypted & unencrypted DB clusters
+	- Up to 15 Cross region read replica is supported.
+
+3. AWS WAF can be executed at edge locations on CloudFront or at ALB at the regional level. 
+
+4. SessionDuration is an optional SAML attribute that can be set to determine user sessions range 15 min to 12 hours, with default as 1 hour when no attribute is set.
+
+5. AWS Config doesn't currently record S3 Glacier valuts. So you can create custom rules and attach a lambda function for evaluation logic for the rule.
+
+6. Cloud Trail logs are automatically encrypted.
+
+
+################# whiz labs 5 ####################################
+
+1. Maximum retention period possible for RDS database is 35 days
+
+2. Interface endpoints can be used to connect from subnets in VPC to various AWS services like SQS directly without internet. With Interface endpoint, all this traffic flows with the AWS network.
+
+3. DynamoDB provides the on-demand backup capability. you can create full backups of your tables for long-term retention and archival for regulatory.
+
+4. VPN connection is the most cost-effective. it might not be the most reliable and you are dependent on the internet bandwidth.
+
+5. in case of long-running queues or Databae corruption error, Amazon Primary instance will not automatically failover to standby instance in different AZ. you need to manually failover to standby DB instance.
+
+6. Versioning enabled bucket can be deleted 
+	- Delete the bucket programatically using AWS SDK
+	- use buckets lifecycle configuration to request that amazon S3 delete the objects.
+	- use S3 console. 
+
+7. UpdateReplacePolicy Attribute is used to retain / backup resources druing the stack update process.
+
+DeletionPolicy attribute is used to retain / Backup of resources before stack is deleted.
+
+8. Amazon Redshift logs information 
+- Connection log 
+- user log 
+- user activity log
+
+9. If Read replica in place, you cannot disable backups for the RDS instance
+
+10. RDS Proxy allows applications to pool & share connections established with the RDS database.
+
+11. To restore a DB instance from shared encrypted snapshots, first, you need to create a copy of the DB snapshot & then need to create a DB instance from the copy of the snapshot.
+
+12. While using AWS config over organizations, allow data replication to replicate data from source accounts to aggregator accounts.
+
+--------------------------------------------
+GuardDuty, Inspector, WAF, Shield, Secrets Manager:
+-------------------------------------------
+
+1. For an automated preventive action based upon Amazon GuardDuty findings, CloudWatch events and Lambda functions can be used.
+
+2. An assessment template for Amazon inspector consists of the following parameters
+	1. Name
+	2. Target Name
+	3. Rules Package
+	4. Duration
+
+Optional Parameters are
+	1. SNS Topic
+	2. Tag
+	3. Attributes added to findings
+	4. Assessment Schedule
+
+
+3. AWS WAF has two different ways to check ACL
+	1. one-minute metrics, (can seen in Cloudwatch)
+
+	2. Sampling requests (can seen in WAF console up to 3 hours)
+
+4. For Testing new Web ACLs in AWS WAF to avoid an impact on the production network.
+	1. Configure all the rules in a web ACL to count web requests
+	2. Set the defualt action for the web ACL to allow requests.
+
+5. while creating amazon cloudwatch metrics using AWS Shield Advanced metrics, 
+
+
+Create alaram in cloudwatch console, and choose ASWDDOSProtectionMetrics, which are only available for Shield Advanced.
+
+----------------------------------------------
+S3, S3 Glacier, Storage Gateway, EBS, EFS, FSx
+----------------------------------------------
+
+
