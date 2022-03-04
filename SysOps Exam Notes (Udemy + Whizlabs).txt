@@ -1,4 +1,435 @@
 
+AWS Control Tower (Centralized Governance, cross account governance)
+
+- Manage aws accounts easily and enforce compliance regulations on all of AWS accounts.It is differ from AWS Organizations.
+
+AWS Service Catalog - manage a catalog of IT services and resources.
+
+AWS GuardDuty can be used to monitor object level API actions within amazon S3 buckets. it users CloudTrail management events and CloudTrail S3 data events to analyze secrity risks.
+
+Amazon Macie - is used to detect sensitive data across all the organizations S3 buckets.
+
+Elastic Beanstalk - Traffic splitting deployment policy used to quick rollback and canary purpose.
+
+By default, ALB considers the last value within query parameters while invoking lambda function. incase of multiple query parameters, Multi-Value headers need to be enabled.
+
+Runbooks - run in the context of user who initiated the runbooks.
+
+Use SetAlarmState API call to trigger an alram sending notification to SNS topic
+
+AWS IAM policy simulator - is used to test the Resource based policy
+
+AWS Access analyzer -  will help to evaluate resources within AWS which are shared with external entities.
+
+AWS Config Conformance Packs - are collection of AWS Config rules and remediation actions that can be easily deployed.
+
+Composite alaram helps to reduce the no.of notifications, and sends single alert for all metrics. but it cannot initiate actions based upon the alarm state.
+
+WIth Alias records, Custome TTL values cannot be set. only default TTL values are used.
+
+
+Practice Test 1:
+----------------
+
+1. AWS RAM (Resource Access Manager) - Sharing subnet between accounts that are part of AWS organizations
+
+	1. Enable sharing within the Organization
+	2. share resources with individual accounts as external principals. post-acceptance subnets can be shared.
+
+2. for connecting on premise AD to AWS SSO 
+	1. Use AD conntector, which would forward all requests from AWS to on premise AD on which users are created.
+	2. AWS managed Microsoft AD with a two way trust relationship with on premise AD 
+
+	Note: Simple AD cannot used for connecting on premise AD with AWS SSO
+
+3. AWS ACM certificates are regional resources. to use in the multi-regional setup request a new certificate.
+
+4. rotating CMK will change the backing key.
+
+5. Use AWS shield global threat dashboard to view near real time trends for DDOS threats for amazon resources.
+
+6. To save cost for S3 bukcet objects encryption use S3 bukcet keys with SSE-KMS keys.
+
+7. AWS WAF:
+	1. Regular rules (Allow or Block particular matching IP address)
+	2. Rate based rules (no.of requests originated from IP per 5 min interval)
+
+8. Lambda Rotation function used for AWS secret manager is created using AWS cloudformation.
+
+9. Amazon data life cycle manager is used to automate the creation, deletion and rentention of the EBS snapshots, and EBS backed AMIs.
+
+While creating a snapshot for multiple EBS volumes connected to a single EC2 instance, following settings needs to be added in life cycle policy.
+
+	1. Policy type - Snapshot life cyle policy
+	2. Resource type - Instance.
+other parameters - target tags, schedules, and retention can be set as per customer.
+
+10. whenever and AWS KMS CMK is modified for secrets in AWS secret manager, the additional secret value should be updated using "UpdateSecret". if old CMK is deleted before updating secrets, secrets cannot be decrypted.
+
+12. Service Health Dashboard - display general status of all AWS Services 
+	Personal Health Dashboard - alerts for aws service availability and performance which may impact resources deployed IN YOUR ACCOUNT.
+
+13. Amazon EventBridge can be used for scheduling automated Amazon EBS Snapshot
+	1. rate expression rule
+	2. cron expression rule.
+
+15. Enable Data deduplication eliminates redundant data saved by multiple users on Amazon Fsx for windows file server. Data deduplication is a background process performed on a file system without any performance impact on users.
+
+19. Default networking mode for AWS fargate launch type is awsvpc. in which each amazon ECS task launched on instance gets a separate ENI. For monitoring between tasks, VPC Flow logs can be applied at the ENI of each task.
+
+20. AWS Budgets - help to set budget for particular resource and gets alerted
+	Cost Explorer Resource Rightsizing recommendation - gives cost-related savings
+	Trusted Adviser - recommendations that helps to follow best practices.
+	Compute Optimizer - gives cost and performance for application load for 
+		 EC2, EBS volumes, Auto Scaling, Lambda functions
+
+21. Cloudwatch events can get notified for all findings that GuardDuty generates.
+
+22. Before enabling Security Hub, you must first enable resource recording in AWS config.
+
+23. AWS Control Tower - manage AWS accounts easily and enforce compliance regulations on all of the AWS accounts.
+
+24***. AWS Config Conformance Packs are collections of AWS Config rules and remediation actions that can be easily deployed. 
+
+26. SAML authentication for Kibana is the best way to give access.
+
+
+30. Nested stack, the whole stack is divided into different stacks. and the output from one stack in the nested stack group can be used as inputs to another stack.
+
+	Stacke sets: used to create stacks across mulitple accounts and regions with a single operation.
+
+32. AWS Security Hub centralizes and scurity findings from across AWS services and accounts. these findings can be sent to AWS System Manager OpsCenter, where security issues can be consolidated for investigation and resolution along with operational issues.
+
+AWS System manager uses explorer as a reporting hub displaying all operational and security issues summary and trend.
+
+33. Enabling Amazon S3 Transfer Acceleration on S3 buckets increase data upload performance between uses in different regions than that of S3 bucket, since data is uploaded to the nearest edge location from where it uses the optimum path to upload data to the S3 bukcet in different regions.
+
+for files more than 100 mb we should prefer multi part upload.
+
+
+35. Geoproximity has bias value which we can route traffic to particular resource more percetage according to Geo location.
+
+36. For a single master Aurora MySQL DB Cluster, backtracking can be enabled during DB cluster creation. This enables DB cluster to rewind to a specific time. this is a quick option for restoring a DB cluster to a particular time as compared to restoration using DB cluster snapshots or from backup data.
+
+37. For the AWS OpsWork Stack, the best practices to grant users permsission is using AWS OpsWorks Stacks Permissions management. 
+	1. Deny - No permissions
+	2. Show - view stack configuration
+	3. Deploy - view stack configuration and deploy apps
+	4. Manage - All permissions.
+
+for granular permissions, IAM policies can be used instead of OpsWork Stack Permission management.
+
+38. Communication between AWS System Manager & managed instances can be established using interface VPC endpoint in an Amazon VPC.
+
+39. For secure communication between managed instance and session manager additional interface VPC endpoint "com.amazonaws.region.ssmmessages" must be created.
+
+41. Security Hub integrate with EventBride or Cloudwatch by forwading its security findings. 
+
+48. You can use the origin group to configure failover routings in a Cloudfront distribution.
+
+49. You can manage and customize the creation of AMIs through image pipelines. After images are generated you can also distribute them to other AWS Region.
+
+50. Amazon inspector, users can include the common Vulnerabilities and Exposure package in an assessment template.
+
+
+
+How to terminate Spot instances?
+You must first cancel a spot request and then terminate the associated spot instances.
+
+
+Spot Fleets = set of Spot instances + (optional) on-demand instances.
+Spot fleet allow us to automatically request spot instances with the lowest price.
+
+
+EC2 image builder - Automate the creation, maintain, validate and test EC2 AMIs.
+can be run on a schedule (weekly, whenever packages are updated etc...)
+
+
+AWS System Manger Overview:
+
+	1. manage your EC2 and on premise systems at scale
+	2. Get Operational insights about the state of your infrastructure
+	3. Easily detect problems
+	4. Patching automation for enhanced compliance.
+	5. work for both windows and linux OS
+	6. Integrated with Cloudwatch metrics/dashboards
+	7. Integrated with AWS Config
+	8. Free service.
+
+	
+Parameter Store :
+------------------
+ To store secrets (externally maintain the configuration values, to be picked up at runtime by your application) and can be accessed as parameters
+
+SSM Inventory :
+---------------
+ Automated Collection of the metadata from managed instances (EC2/On-Premise) including 					multiple regions and accounts
+
+SSM State:
+----------
+ Automate the process of Keeping your managed instances (EC2/On-premise) in a state that you define. It Bootstrap the instances with software, patch, OS/software update on a schedule.
+
+SSM Session Manager:
+-------------------
+ Login to your instance without SG inbound rules, just need IAM permissions to access.
+
+
+AWS OpsWork (Alternative to SSM):
+---------------------------------
+ Chef & Puppet help you perform server configuration automatically or, repetitive actions
+
+
+Cloud Formation for SysOps:
+---------------------------
+Templates Components:
+	1. Resources - Your AWS Resources (MANDATORY)
+	2. Parameters - Dynamic inputs for your template
+	3. Mapings - Static variables for your template
+	4. Outputs - References to what have been created
+	5. Conditionals - List of conditions to perform resource creation
+	6. Metadata
+
+Parameters: 
+-----------
+Fn::Ref  OR !Ref 
+
+Mappings: 
+----------
+Fn::FindInMap OR !FindInMap [MapName, TopLevelKey, SecondLevelKey]
+
+Outputs: (Cross Stack Reference)
+--------------------------------  
+Fn::ImportValue OR !ImportValue
+if you want to import first you need to export using "Export" statement.
+You can't delete the underlying stack until all the references are delete too.
+
+Conditions:
+-----------
+!Equals [ !Ref EnvType, prod]
+Intrinsic logical functions are 
+	1. Fn:: And
+	2. Fn:: Equal
+	3. Fn:: Or
+	4. Fn:: If
+	5. Fn:: Not
+
+
+Nested Stacks: Stacks as part of other stacks. It will associate repeated patterns/ common components in separate stacks and call them from other stacks. Nested stacks are used for best practices.
+
+
+ChangeSet:
+----------- 
+When you update a stack, you need to know what changes before if happens for greater confidence. it won't say whether the stack update successful or failure.
+
+Cloudformation Drift:
+----------------------
+Cloudformation allow you to create a infrastructure. But it doesnot protect you against manual configuration changes. 
+
+To check whether any manual changes happened in your stack from console, we can use Drift.
+
+Cloudformation Deletion Policy:
+-------------------------------
+Put a deletion policy on any resource to control what happens when the cloud formation template deleted.
+
+	1. Deletion Policy = Rentain:
+	-----------------------------
+	works for any resource or nested stack.
+
+	2. Deletion Policy = Snapshot:
+	------------------------------
+	EBS Volumes, ElasticCache Cluster and Replication groups, RDS related instances and clusters
+
+	3. Deletion Policy = Delete (Default behaviour):
+	------------------------------------------------
+	Note: AWS::RDS::DBCluster resources, the default policy is Snapshot
+	Note: to delete S3 Bucket, you need to first empty the bucket of its content.
+
+
+Depends on:
+-------------
+Resource should wait until the specified resource is created in cloudformation template.
+
+
+Stack Policy:
+------------
+Protecting some resources to be updated by other persons.
+
+
+Cloudformation StackSets: (Global cloudformation stack)
+------------------------
+Helps to maintain stack across multiple accounts and regions with a single operation.
+Administrator account need to create Stack. Trusted accounts to create, update, and delete stack instances from StackSets.
+
+
+
+
+S3:
+---
+
+S3 Inventory:
+-------------
+
+	Generate reports on the replication and encryption status. 
+
+Analytics:
+----------
+	Recommendation for S3 life cycle rules, the optimal number of days to move objects between two different storage tiers.
+
+Versioning:
+-----------
+	1. any file that is not versioned prior to enabling version will have version "null"
+	2. Suspending version doesnot delete the previous version.
+
+
+Encryption:
+-----------
+	1. SSE-S3: encrypt S3 objects using keys handled and managed by AWS
+	2. SSE-KMS: leverage AWS key management service to manage encryption keys
+	3. SSE-C : When you want to manage your own encryption keys (HTTPS is must for this)
+	4. Client side encryption (using AWS SDK, or encryption libraries)
+
+S3 Security:
+-----------
+	1. User based:
+	--------------
+	IAM Policies - which API calls should be allowed for a specific user from IAM console.
+
+	2. Resource Based:
+	-----------------
+	Bucket policy - Bucket wide rules from the S3 console - allows cross account
+	Object Access Control List (ACL) - finer grain control
+	Bucket Access Control List (ACL) - less common
+
+	Note:
+	An IAM pricipal can access an S3 Object if
+
+			(the user IAM policy ALLOW it     OR     the resource polity ALLOW it)
+			 						AND
+						there is no explicit DENY
+
+	3. Others:
+	----------
+		Newtworking : Supports VPC endpoints (without internet access)
+		Logging and Audit: S3 access logs can be stored in other S3 bukcet.
+		API calls can be logged into AWS CloudTrail
+		User Security:
+		MFA delete must be enabled to delete versioning objects.
+		Pre-singed URLs.
+
+		S3 is Strongly consistent.
+
+MFA- Delete:
+	1. only the bucket owner (root account) can enable/disable MFA-Delete
+	2. MFA-Delete currently can only be enabled using the CLI, SDK, S3 REST API
+	You will need MFA to
+		- Permeanently delete an object version
+		- suspend versioning on the bucket
+
+	You WON"T need MFA for:
+		- enabling version
+		- listing deleted version
+
+
+
+S3 Access points:
+-----------------
+prefix (key) based access to S3 buckets based on department (/finance, /sales, /marketing)
+Permissions based on IAM user/groups. and one policy per access point
+
+S3 VPC endpoints:
+-----------------
+Private instance need to talk to S3 bucket we use VPC endpoint gateway.
+and in the bucket policy we need to mention AWS::SourceVpc as resource.
+
+
+S3 Batch:
+--------
+
+If we want to do bulk operations in S3 bucket object we will use S3 Batch operations
+Eg:    1. encrypting exisiting objects in Bucket
+		2. copying objects to another bukcet or region
+
+
+
+AWS Snow Family:
+----------------
+AWS OpsHub need to be installed to transfer data from your account to snowcone/ snowballedge.
+
+Amazon Fsx:
+-----------
+Launch third-party high performance file system on AWS and fully managed service
+	1. Fsx for Lustre (ML and HPC, integrated to S3)
+	2. Fsx for windows file server.
+
+FSx file system deployment options:
+----------------------------------
+	1. Scratch File System
+	--------------------
+	- Temporary Storage
+	- High burst (6X faster)
+	- Short term processing, optimize costs.
+
+	2. Persisitent File System:
+	---------------------------
+	- Long-term storage
+	- Data replicated within same AZ
+	- Replace failed files within minutes
+	- Long term processing, sensitive data.
+
+
+Storage Gateway:
+---------------
+On-premise data to cloud => Storage Gateway
+File access/NFS -user auth with Active Directory => File Gateway (Cache frequently accessed data)
+Volume/Blocke storage, iSCSI => Volume Gateway
+	Volume gateway has two options 1. Cached and 2. Stored 
+
+
+AWS CloudFront:
+--------------
+CDN Service, used for DDoS attack with Shield and WAF
+
+
+AWS DataSync:
+-------------
+Transfer data between on premise to AWS
+
+AWS Backup:
+-----------
+Centrally managed and automate backup across AWS Services.
+No need to create custom scripts and manual process.
+supports cross-region and cross-account backups.
+
+
+IAM:
+----
+
+1. IAM Credential Report: (Account-level)
+-----------------------------------------
+ A report that lists all your accounts users and the status of their various crdentials
+
+2. IAM Access Advisor (user-level):
+----------------------------------
+Access advisor shows the Service permissions granted to a user and when those services were last used. 
+
+3. IAM Access Analyzer:
+-----------------------
+Which resources are shared externally i.e S3, IAM Roles, KMS keys, Lambda, SQS, SSM store
+
+Define Zone of Trust i.e AWS Account or Organization to find out security potential
+
+AWS STS (Security Token Service):
+---------------------------------
+AssumeRole
+AssumeRoleWithSAML
+AssumeRoleWithWebIdentity
+GetSessionToken
+
+
+Cognito User pool  ==> Manage username /Password
+
+Cognito Identity Pools ===> AWS Services access (Roles and policies)
+
 
 AWS Health 
 
